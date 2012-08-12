@@ -15,7 +15,7 @@ via http://userscripts.org/scripts/show/35041
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Firefox 14.0.1(Scriptish 0.1.7)
+        Mozilla Firefox 14.0.1(Scriptish 0.1.7)
         Google Chrome 21.0.1180.75
 */
 
