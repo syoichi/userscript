@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Google Reader Loaded Item Counter
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    show the number of loded itmes in Google Reader's Search.
 // @include        http://www.google.com/reader/view/*
 // @include        https://www.google.com/reader/view/*
@@ -34,6 +34,7 @@ confirmed:
         hasOnly = options.addOnly || options.removeOnly;
         each = Array.prototype.forEach;
         nodesType = (options.addOnly ? 'add' : 'remov') + 'edNodes';
+        options.callback = callback;
 
         function eachNodes(mutation) {
             function callWithInfo(node) {
@@ -50,6 +51,7 @@ confirmed:
         (options.observer = new MO(function eachMutations(mutations) {
             mutations.forEach(eachNodes);
         })).observe(options.target, options);
+        return options;
     }
 
     searchInput = doc.querySelector('#gbqfq, #search-input');
@@ -63,9 +65,7 @@ confirmed:
     items = doc.getElementsByClassName('entry');
 
     nodeObserver(function itemsCounter() {
-        var len;
-
-        len = items.length;
+        var len = items.length;
 
         if (!len || len === Number(newItems.textContent.replace(/\D/g, ''))) {
             if (searchInput.placeholder) {
