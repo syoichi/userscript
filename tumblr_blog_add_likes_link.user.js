@@ -13,6 +13,7 @@ confirmed:
     Windows 7 Home Premium SP1 64bit:
         Mozilla Firefox 14.0.1(Scriptish 0.1.7)
         Google Chrome 21.0.1180.79
+        Opera 12.01
 */
 
 /*jslint browser: true, maxlen: 80*/
