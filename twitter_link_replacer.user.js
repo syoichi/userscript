@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    replace various link by any link in Twitter.
 // @include        http://twitter.com/*
 // @include        https://twitter.com/*
@@ -12,12 +12,12 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 14.0.1(Scriptish 0.1.7)
-        Google Chrome 21.0.1180.79
+        Mozilla Firefox 15.0.1(Scriptish 0.1.7)
+        Google Chrome 21.0.1180.89
 */
 
 /*jslint browser: true, maxlen: 80*/
-// Edition 2012-08-11
+// Edition 2012-09-19
 
 (function executeReplaceLink(each, doc, lc) {
     'use strict';
@@ -96,7 +96,7 @@ confirmed:
             }
         },
         'yfrog.com': {
-            urlRE: /^(https?:\/\/yfrog\.com\/)([\da-zA-Z]+)$/,
+            urlRE: /^(https?:\/\/)(yfrog\.com\/)([\da-zA-Z]+)$/,
             replaceLink: function forYfrog(link, url) {
                 var frag;
 
@@ -106,7 +106,7 @@ confirmed:
                     return true;
                 }
 
-                link.href = frag[1] + 'z/' + frag[2];
+                link.href = frag[1] + 'twitter.' + frag[2] + 'z/' + frag[3];
             }
         },
         'flic.kr': {
