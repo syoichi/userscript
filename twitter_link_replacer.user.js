@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.2
+// @version        0.0.3
 // @description    replace various link by any link in Twitter.
 // @include        http://twitter.com/*
 // @include        https://twitter.com/*
@@ -12,12 +12,12 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 15.0.1(Scriptish 0.1.7)
-        Google Chrome 21.0.1180.89
+        Mozilla Firefox 18.0.1(Scriptish 0.1.8)
+        Google Chrome 24.0.1312.57
 */
 
 /*jslint browser: true, maxlen: 80*/
-// Edition 2012-09-19
+// Edition 2013-02-02
 
 (function executeReplaceLink(each, doc, lc) {
     'use strict';
@@ -69,6 +69,18 @@ confirmed:
                 }
 
                 link.href = url + '/large';
+            }
+        },
+        'pbs.twimg.com': {
+            urlRE: new RegExp(
+                '^https?://pbs\\.twimg\\.com/media/[-\\w]+\\.(?:png|jpg)$'
+            ),
+            replaceLink: function forPbsTwimg(link, url) {
+                if (!this.urlRE.test(url)) {
+                    return true;
+                }
+
+                link.href = url + ':large';
             }
         },
         'twitpic.com': {
@@ -159,13 +171,21 @@ confirmed:
         urlParser = doc.createElement('a');
 
         return function replacer(link) {
-            var linkData, url, site;
+            var linkData, url, img, site;
 
             linkData = link.dataset;
             url = linkData.ultimateUrl || linkData.expandedUrl || link.title;
 
             if (!url) {
-                return;
+                if (link.childElementCount === 1 && !link.target) {
+                    img = link.querySelector('img');
+
+                    if (img) {
+                        url = img.src;
+                    }
+                } else {
+                    return;
+                }
             }
 
             urlParser.href = url;
@@ -187,7 +207,7 @@ confirmed:
     }());
     eachLinks = function eachLinks(node) {
         each.call(
-            node.getElementsByClassName('twitter-timeline-link'),
+            node.querySelectorAll('.twitter-timeline-link, .link'),
             replacer
         );
     };
@@ -198,7 +218,17 @@ confirmed:
         var node = info.node,
             nodeData = node.dataset;
 
-        if (nodeData && /^(?:tweet|activity)$/.test(nodeData.itemType)) {
+        if (
+            nodeData && (
+                /^(?:tweet|activity)$/.test(nodeData.itemType) ||
+                    nodeData.cardType === 'photo' ||
+                    nodeData.componentContext === 'conversation' ||
+                    node.classList.contains('tweet-embed') ||
+                    node.classList.contains('replies') ||
+                    node.classList.contains('permalink') ||
+                    node.id === 'timeline'
+            )
+        ) {
             eachLinks(node);
         }
     }, {
