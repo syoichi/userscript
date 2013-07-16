@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.3
+// @version        0.0.4
 // @description    replace various link by any link in Twitter.
-// @include        http://twitter.com/*
 // @include        https://twitter.com/*
 // @run-at         document-end
 // ==/UserScript==
@@ -12,12 +11,12 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 18.0.1(Scriptish 0.1.8)
-        Google Chrome 24.0.1312.57
+        Mozilla Firefox 22.0(Scriptish 0.1.11)
+        Google Chrome 28.0.1500.72
 */
 
 /*jslint browser: true, maxlen: 80*/
-// Edition 2013-02-02
+// Edition 2013-07-02
 
 (function executeReplaceLink(each, doc, lc) {
     'use strict';
@@ -26,31 +25,34 @@ confirmed:
 
     pageContainer = doc.getElementById('page-container');
 
-    // via https://gist.github.com/3366491
+    // via https://gist.github.com/syoichi/3366491
     function nodeObserver(callback, options) {
-        var MO, hasOnly, each, nodesType;
+        var hasOnly, each, nodesType, observer;
 
-        MO = window.MutationObserver || window.WebKitMutationObserver;
         hasOnly = options.addOnly || options.removeOnly;
         each = Array.prototype.forEach;
-        nodesType = (options.addOnly ? 'add' : 'remov') + 'edNodes';
-        options.callback = callback;
+        nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
 
-        function eachNodes(mutation) {
+        function eachNodes(record) {
             function callWithInfo(node) {
-                callback({node: node, mutation: mutation, options: options});
+                callback({node: node, record: record, options: options});
             }
 
-            if (mutation.type === 'childList' && hasOnly) {
-                each.call(mutation[nodesType], callWithInfo);
+            if (record.type === 'childList' && hasOnly) {
+                each.call(record[nodesType], callWithInfo);
             } else {
                 callWithInfo(null);
             }
         }
-
-        (options.observer = new MO(function eachMutations(mutations) {
+        function eachMutations(mutations) {
             mutations.forEach(eachNodes);
-        })).observe(options.target, options);
+        }
+
+        observer = new window.MutationObserver(eachMutations);
+        observer.observe(options.target, options);
+
+        options.observer = observer;
+        options.callback = callback;
         return options;
     }
 
@@ -177,14 +179,14 @@ confirmed:
             url = linkData.ultimateUrl || linkData.expandedUrl || link.title;
 
             if (!url) {
-                if (link.childElementCount === 1 && !link.target) {
-                    img = link.querySelector('img');
-
-                    if (img) {
-                        url = img.src;
-                    }
-                } else {
+                if (link.childElementCount !== 1 || link.target) {
                     return;
+                }
+
+                img = link.querySelector('img');
+
+                if (img) {
+                    url = img.src;
                 }
             }
 
@@ -216,17 +218,28 @@ confirmed:
 
     nodeObserver(function checkNodeData(info) {
         var node = info.node,
-            nodeData = node.dataset;
+            target = info.record.target,
+            nodeData = node.dataset,
+            first = node.firstElementChild;
 
         if (
-            nodeData && (
-                /^(?:tweet|activity)$/.test(nodeData.itemType) ||
-                    nodeData.cardType === 'photo' ||
-                    nodeData.componentContext === 'conversation' ||
-                    node.classList.contains('tweet-embed') ||
-                    node.classList.contains('replies') ||
-                    node.classList.contains('permalink') ||
-                    node.id === 'timeline'
+            (
+                nodeData && (
+                    /^(?:tweet|activity)$/.test(nodeData.itemType) ||
+                        nodeData.cardType === 'photo' ||
+                        nodeData.componentContext === 'conversation' ||
+                        node.classList.contains('tweet-embed') ||
+                        node.classList.contains('replies') ||
+                        node.classList.contains('permalink') ||
+                        node.id === 'timeline'
+                )
+            ) || (
+                target.classList.contains('expanded-conversation') &&
+                    node.tagName === 'LI' &&
+                    first && (
+                        first.dataset.componentContext === 'in_reply_to' ||
+                        first.dataset.componentContext === 'replies'
+                    )
             )
         ) {
             eachLinks(node);
