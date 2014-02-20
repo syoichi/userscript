@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.4
+// @version        0.0.5
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -11,14 +11,13 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 22.0(Scriptish 0.1.11)
-        Google Chrome 28.0.1500.72
+        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
 */
 
 /*jslint browser: true, maxlen: 80*/
-// Edition 2013-07-02
+// Edition 2014-02-06
 
-(function executeReplaceLink(each, doc, lc) {
+(function executeReplaceLink(forEach, doc, lc) {
     'use strict';
 
     var pageContainer, sites, replacer, eachLinks;
@@ -94,7 +93,7 @@ confirmed:
 
                 link.href = url + '/full';
             }
-        },
+        },/*
         'gyazo.com': {
             urlRE: /^(http:\/\/)(gyazo\.com\/[\da-f]{32})(?:\.png)?(?:\?\d+)?$/,
             replaceLink: function forGyazo(link, url) {
@@ -108,7 +107,7 @@ confirmed:
 
                 link.href = frag[1] + 'cache.' + frag[2] + '.png';
             }
-        },
+        },*/
         'yfrog.com': {
             urlRE: /^(https?:\/\/)(yfrog\.com\/)([\da-zA-Z]+)$/,
             replaceLink: function forYfrog(link, url) {
@@ -176,7 +175,8 @@ confirmed:
             var linkData, url, img, site;
 
             linkData = link.dataset;
-            url = linkData.ultimateUrl || linkData.expandedUrl || link.title;
+            url = linkData.ultimateUrl || linkData.expandedUrl ||
+                linkData.resolvedUrlLarge || linkData.url || link.title;
 
             if (!url) {
                 if (link.childElementCount !== 1 || link.target) {
@@ -208,8 +208,8 @@ confirmed:
         };
     }());
     eachLinks = function eachLinks(node) {
-        each.call(
-            node.querySelectorAll('.twitter-timeline-link, .link'),
+        forEach.call(
+            node.querySelectorAll('.twitter-timeline-link, .link, .media'),
             replacer
         );
     };
