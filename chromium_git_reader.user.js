@@ -14,10 +14,9 @@ confirmed:
         Mozilla Firefox 27.0.1(Scriptish 0.1.11)
 */
 
-/*jslint browser: true, maxlen: 80*/
-// Edition 2014-02-06
+/* jshint maxlen: 80 */
 
-(function executeChromiumGitReader(win, doc, lc, each) {
+(function executeChromiumGitReader(win, doc, each) {
     'use strict';
 
     var re, shortlog, commitMessages, colons, category, roll, fix, remove, misc,
@@ -64,7 +63,7 @@ confirmed:
         '^https://chromium\\.googlesource\\.com/chromium/chromium/\\+log/HEAD/$'
     );
 
-    if (!re.test(lc.href)) {
+    if (!re.test(location.href)) {
         return;
     }
 
@@ -538,4 +537,4 @@ confirmed:
 
         request(nextLink.href, nextPageLoader);
     });
-}(window, document, location, Array.prototype.forEach));
+}(window, document, Array.prototype.forEach));

@@ -14,8 +14,7 @@ confirmed:
         Mozilla Firefox 27.0.1(Scriptish 0.1.11)
 */
 
-/*jslint browser: true, maxlen: 80*/
-// Edition 2014-02-06
+/* jshint maxlen: 80 */
 
 // via http://let.hatelabo.jp/taizooo/let/hLHUr72VjPlW
 //     https://gist.github.com/syoichi/1033628

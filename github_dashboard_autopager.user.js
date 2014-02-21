@@ -16,8 +16,7 @@ confirmed:
         Google Chrome 21.0.1180.79
 */
 
-/*jslint browser: true, maxlen: 80*/
-// Edition 2012-08-11
+/* jshint maxlen: 80 */
 
 (function executeAutoPager(win, doc) {
     'use strict';

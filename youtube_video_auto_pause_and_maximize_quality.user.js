@@ -16,8 +16,7 @@ confirmed:
         Google Chrome 24.0.1312.52
 */
 
-/*jslint browser: true, maxlen: 80*/
-// Edition 2012-12-31
+/* jshint maxlen: 80 */
 
 // ref. https://developers.google.com/youtube/js_api_reference
 

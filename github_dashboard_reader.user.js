@@ -14,9 +14,8 @@ confirmed:
         Mozilla Firefox 27.0.1(Scriptish 0.1.11)
 */
 
-/*jslint browser: true, maxlen: 80*/
-/*global Range*/
-// Edition 2014-02-06
+/* jshint maxlen: 80 */
+/* global Range */
 
 (function executeGitHubDashboardReader(win, doc) {
     'use strict';

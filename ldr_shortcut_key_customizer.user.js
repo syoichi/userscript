@@ -14,9 +14,8 @@ confirmed:
         Mozilla Firefox 27.0.1(Scriptish 0.1.11)
 */
 
-/*jslint browser: true, maxlen: 80*/
-/*global GM_openInTab, MouseEvent*/
-// Edition 2014-02-06
+/* jshint maxlen: 80, camelcase: false */
+/* global GM_openInTab, MouseEvent */
 
 (function executeCustomizeKey(win, doc) {
     'use strict';

@@ -17,8 +17,7 @@ confirmed:
         Google Chrome 28.0.1500.72
 */
 
-/*jslint browser: true, maxlen: 80*/
-// Edition 2013-07-02
+/* jshint maxlen: 80 */
 
 // inspired by http://let.hatelabo.jp/pacochi/let/gYC-xNPqhbauPQ
 //             https://gist.github.com/teramako/4554515

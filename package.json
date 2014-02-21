@@ -1,0 +1,17 @@
+{
+  "name": "userscript",
+  "description": "My User Scripts",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/syoichi/userscript.git"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-cli": "*",
+    "grunt-contrib-jshint": "*"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/grunt travis"
+  }
+}

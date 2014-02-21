@@ -14,10 +14,9 @@ confirmed:
         Mozilla Firefox 27.0.1(Scriptish 0.1.11)
 */
 
-/*jslint browser: true, maxlen: 80*/
-// Edition 2014-02-06
+/* jshint maxlen: 80 */
 
-(function executeBlinkGitReader(win, doc, lc, each) {
+(function executeBlinkGitReader(win, doc, each) {
     'use strict';
 
     var re, shortlog, commitMessages, authors,
@@ -75,7 +74,7 @@ confirmed:
         '^https://chromium\\.googlesource\\.com/chromium/blink/\\+log/HEAD/$'
     );
 
-    if (!re.test(lc.href)) {
+    if (!re.test(location.href)) {
         return;
     }
 
@@ -476,4 +475,4 @@ confirmed:
 
         request(nextLink.href, nextPageLoader);
     });
-}(window, document, location, Array.prototype.forEach));
+}(window, document, Array.prototype.forEach));
