@@ -51,8 +51,16 @@ confirmed:
 
         return nodes;
     }
-    function request(url, listener) {
+    function request(url, callback) {
         var client = new XMLHttpRequest();
+
+        function listener(evt) {
+            if (/^(?:200|304)$/.test(client.status)) {
+                callback(client.response, evt);
+            } else {
+                window.alert(client.status + ' ' + client.statusText);
+            }
+        }
 
         client.addEventListener('load', listener);
         client.addEventListener('error', listener);
@@ -426,19 +434,10 @@ confirmed:
         return;
     }
 
-    request(firstNextLink.href, function nextPageLoader(evt) {
-        var client, response, nextShortlog, hashLink, commit, nextLink;
+    request(firstNextLink.href, function nextPageLoader(nextDoc) {
+        var nextShortlog, hashLink, commit, nextLink;
 
-        client = evt.target;
-
-        if (!/^(?:200|304)$/.test(client.status)) {
-            win.alert(client.status + ' ' + client.statusText);
-
-            return;
-        }
-
-        response = client.response;
-        nextShortlog = response.querySelector('.shortlog');
+        nextShortlog = nextDoc.querySelector('.shortlog');
 
         if (!nextShortlog) {
             return;
