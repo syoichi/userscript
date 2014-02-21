@@ -227,7 +227,8 @@ confirmed:
         'build correction after',
         'test update after',
         'test correction after',
-        'IDB: TestExpectations batch -'
+        'IDB: TestExpectations batch -',
+        'Move to using std::unique_ptr for'
     ].join('|');
 
     filterRE = new RegExp(prefix + [

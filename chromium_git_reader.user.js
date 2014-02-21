@@ -101,8 +101,8 @@ confirmed:
         'cros-asan',
         'Linux/CrOS',
         '(?:(?:DMP|Telemetry) / |ASan/)?Android' +
-            '(?: (?:buildbot|bb|WebView|perf(?: tests?)?(?: runner)?|' +
-            'envsetup|memreport|Chromoting|' +
+            '(?: (?:buildbot|bb|WebView(?: build)?|' +
+            'perf(?: tests?)?(?: runner)?|envsetup|memreport|Chromoting|' +
             '/ (?:Telemetry|DMP|dmprof|memreport))|Perf|/clang)?',
         'android_webview',
         'aw',
@@ -113,6 +113,7 @@ confirmed:
         'file_manager',
         'file_handler_util',
         'File manager drive API',
+        'AudioPlayer',
         'kiosk',
         'cryptohome',
         'shill \\(chromeos\\)',
