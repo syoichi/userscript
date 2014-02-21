@@ -176,6 +176,7 @@ confirmed:
         'pkasting@chromium.org',
         'kbr@chromium.org',
         'kochi@chromium.org',
+        'bajones@chromium.org',
         'timloh@chromium.org',
         'vollick@chromium.org',
         'alancutter@chromium.org',

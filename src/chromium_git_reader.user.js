@@ -353,8 +353,9 @@ confirmed:
         'obsolete comment\\.$',
         'stale expectations$',
         '(?:some )?unused (?:variable )?' +
-            '(?:declarations?|definitions|dependency|code|property|' +
-            'unit tests|field|strings|function|actions|var(?:iable)?)(?:\\.)?$',
+            '(?:declarations?|definitions?|dependency|code|property|headers?|' +
+            'unit tests?|field|strings?|function|actions?|' +
+            'var(?:iable)?)(?:\\.)?$',
         'unnecessary code for ',
         'unnecessary macro\\.$',
         'test suppression\\.$',
