@@ -1,4 +1,4 @@
-常用している自作のUser Script
+常用している自作のUser Script[![Build Status](https://travis-ci.org/syoichi/userscript.png?branch=master)](https://travis-ci.org/syoichi/userscript)
 ==========
 
 常用している自作のUser Scriptのほとんどをこのリポジトリで管理するようにした。  
