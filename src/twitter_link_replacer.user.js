@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.5
+// @version        0.0.6
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
 /* jshint maxlen: 80 */
@@ -73,14 +73,15 @@ confirmed:
         },
         'pbs.twimg.com': {
             urlRE: new RegExp(
-                '^https?://pbs\\.twimg\\.com/media/[-\\w]+\\.(?:png|jpg)$'
+                '^https?://pbs\\.twimg\\.com/media/[-\\w]+\\.(?:png|jpg)' +
+                    '(?::large)?$'
             ),
             replaceLink: function forPbsTwimg(link, url) {
                 if (!this.urlRE.test(url)) {
                     return true;
                 }
 
-                link.href = url + ':large';
+                link.href = url.replace(/(?::large)?$/, ':orig');
             }
         },
         'twitpic.com': {
