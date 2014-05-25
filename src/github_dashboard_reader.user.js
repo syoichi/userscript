@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           GitHub Dashboard Reader
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    record alert's datetime and load next page on GitHub Dashboard.
 // @include        https://github.com/
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
 /* jshint maxlen: 80 */
@@ -73,9 +73,10 @@ confirmed:
         ].join(''), target)[0];
     }
     function toggleMarking() {
-        var time = news.querySelector(
-            'div.time > time[datetime="' + githubDatetime + '"]'
-        );
+        var time = news.querySelector([
+            'div.time > time[datetime="' + githubDatetime + '"]',
+            'div.time > local-time[datetime="' + githubDatetime + '"]'
+        ].join(', '));
 
         if (time) {
             getAlert(time).classList.toggle('marking');
@@ -139,7 +140,7 @@ confirmed:
 
         alert.classList.toggle('marking');
 
-        time = alert.querySelector('time');
+        time = alert.querySelector('time, local-time');
 
         if (!time) {
             return;
