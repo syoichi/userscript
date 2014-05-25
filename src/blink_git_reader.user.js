@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
 /* jshint maxlen: 80 */
@@ -20,7 +20,7 @@ confirmed:
     'use strict';
 
     var re, shortlog, commitMessages, authors,
-        colons, category, fix, misc, filterRE,
+        colons, category, fix, remove, misc, filterRE,
         markings, blinkHash, firstHashLink, firstNextLink;
 
     function hideCommit(commitMessage) {
@@ -86,7 +86,7 @@ confirmed:
         return;
     }
 
-    shortlog = doc.querySelector('.shortlog');
+    shortlog = doc.querySelector('.shortlog, .log');
 
     if (!shortlog) {
         return;
@@ -111,6 +111,7 @@ confirmed:
         'haraken@chromium.org',
         'tkent@chromium.org',
         'philipj@opera.com',
+        'sigbjornf@opera.com',
         'ch.dumez@samsung.com',
         'ch.dumez@sisa.samsung.com',
         'nbarth@chromium.org',
@@ -128,7 +129,9 @@ confirmed:
         'rafaelw@chromium.org',
         'yhirano@chromium.org',
         'hayato@chromium.org',
+        'keishi@chromium.org',
         'tasak@google.com',
+        'tyoshino@chromium.org',
         'toyoshim@chromium.org',
         'pfeldman@chromium.org',
         'vsevik@chromium.org',
@@ -142,6 +145,7 @@ confirmed:
         'prybin@chromium.org',
         'serya@chromium.org',
         'aandrey@chromium.org',
+        'dgozman@chromium.org',
         'cevans@chromium.org',
         'inferno@chromium.org',
         'tsepez@chromium.org',
@@ -164,6 +168,7 @@ confirmed:
         'shawnsingh@chromium.org',
         'wangxianzhu@chromium.org',
         'steveblock@chromium.org',
+        'peter@chromium.org',
         'dw.im@samsung.com',
         'l.gombos@samsung.com',
         'seokju.kwon@gmail.com',
@@ -180,6 +185,7 @@ confirmed:
         'timloh@chromium.org',
         'vollick@chromium.org',
         'alancutter@chromium.org',
+        'dmazzoni@google.com',
         'yosin@chromium.org',
         'stavila@adobe.com',
         'jww@chromium.org',
@@ -212,6 +218,7 @@ confirmed:
         'atwilson@chromium.org',
         'enne@chromium.org',
         'dcarney@chromium.org',
+        'davidben@chromium.org',
         'kristianm@chromium.org',
         'simonhatch@chromium.org',
         'skobes@chromium.org',
@@ -228,13 +235,31 @@ confirmed:
         'avi@chromium.org',
         'clamy@chromium.org',
         'danakj@chromium.org',
+        'ricea@chromium.org',
+        'scottmg@chromium.org',
+        'wibling@chromium.org',
+        'aelias@chromium.org',
+        'vrk@chromium.org',
+        'pgervais@chromium.org',
+        'teravest@chromium.org',
+        'hajimehoshi@chromium.org',
+        'hartmanng@chromium.org',
+        'trchen@chromium.org',
+        'vogelheim@chromium.org',
+        'ykyyip@chromium.org',
+        'erikchen@chromium.org',
+        'mek@chromium.org',
+        'qinmin@chromium.org',
         'urvang@google.com',
         'antonm@google.com',
         'vrk@google.com',
         'amikhaylova@google.com',
+        'rmacnak@google.com',
         'crogers@google.com',
         'yoav@yoav.ws',
         'pstanek@opera.com',
+        'jl@opera.com',
+        'dongseong.hwang@intel.com',
         'alexis.menard@intel.com',
         'qiankun.miao@intel.com',
         'joone.hur@intel.com',
@@ -244,20 +269,26 @@ confirmed:
         'adam.treat@samsung.com',
         'vani.hegde@samsung.com',
         'mario.prada@samsung.com',
+        'sl.ostapenko@samsung.com',
+        'mahesh.kk@samsung.com',
+        'rhodovan.u-szeged@partner.samsung.com',
         'rego@igalia.com',
+        'efidler@blackberry.com',
         'petarj@mips.com',
+        'erik.corry@gmail.com',
         'robhogan@gmail.com'
     ];
 
     colons = [
         'ASSERT',
+        'ASSERTION FAILED',
         '(?:(?:Blink|Unreviewed) )?Gardening',
-        'TestExpe?ca?t?ations?',
-        'updated? test ?expect?ations?',
-        'added test suppression',
-        'Flaky LayoutTest',
+        '(?:updated? )?Test ?Expe?ca?t?ations?',
+        'add(?:ed)? (?:test )?suppression',
+        '(?:Flaky )?LayoutTests?',
+        'Garden-o-matic',
         '(?:(?:Small|Header) )?Clean ?ups?',
-        'Refactoring',
+        'Refactor(?:ing)?',
         'wtf(?: include cleanup)?',
         'bindings',
         'IDL compiler',
@@ -265,44 +296,56 @@ confirmed:
         'HarfBuzzShaper',
         'Revert',
         'Fix test flakiness',
-        'PartitionAlloc'
+        'PartitionAlloc',
+        'perf test',
+        'TestFix',
+        'LeakExpectations'
     ].join('|');
     category = [
         'MIPS',
         'Sheriff',
         'Gardening',
-        'Refactoring'
+        'Refactor(?:ing)?'
     ].join('|');
     fix = [
-        '(?:Windows Debug|the Windows component|Mac) build$',
-        '(?:build|ASSERTs?) on ',
-        '(?:python|webkitpy) tests after ',
-        'crashes after ',
-        'Android build (?:failure )?(?:after|broken by) ',
-        'oilpan build after ',
-        'compilation(?: issue)?(?: after |$)',
-        '(?:mac|Android)(?:\\.)?$',
-        'clobbered build issue\\.$',
-        'build warning$',
-        'expectations after autorebaseline\\.$',
-        '.*? flakiness$',
-        'flaky test ',
-        'race in ',
-        '(?:a )?typo ',
-        'build breakage caused by ',
-        'after Blink rev ',
-        'flaky Win compile$',
-        'LayoutTest .*?$',
-        'regression introduced with ',
-        '(?:a few|(?:even )?more) warnings(?: on linux)?(?:\\.)?$'
+        '(?:Windows Debug|the Windows component|Mac|Android|oilpan)' +
+            '(?: build)?(?: failure)?(?: broken by)?',
+        '(?:clobbered )?build(?: (?:warning|issue|breakage caused by))?',
+        '(?:build|ASSERTs?) on',
+        '(?:python|webkitpy) tests',
+        'crashes',
+        'compilation(?: issue)?',
+        'expectations after autorebaseline',
+        '.*? flakiness',
+        'flaky test',
+        'race in',
+        '(?:a )?typo',
+        'after Blink rev',
+        'flaky Win compile',
+        'LayoutTest .*?',
+        'regression introduced with',
+        '(?:a few|(?:even )?more) warnings(?: on linux)?'
+    ].join('|');
+    remove = [
+        'unused (?:file|variable|function|include)s?',
+        'empty director(?:y|ies)',
+        '(?:no-longer-flaky|unnecessary) expectations?',
+        'custom expectation for .*?',
+        'flakiness for .*?',
+        'implied Skip',
+        'dead code',
+        '(?:calls to|usage of) deprecated V8 APIs(?::| (?:in|from))',
+        '\\[LegacyImplementedInBaseClass\\] from .+? IDL interface',
+        'carriage returns from LayoutTests'
     ].join('|');
     misc = [
-        '(?:Add|Remove|Skip|Layout) ' +
-            '(?:(?:a|super-flaky) )?test(?:s|ing)?(?: for)?',
+        '(?:Add(?:ed|ing)?|Remove|Skip|Layout) ' +
+            '(?:(?:a|super-flaky) )?(?:(?:layout|perf(?:ormance)?) )?' +
+            '(?:unit)?test(?:s|ing)?(?: for)?',
         '(?:also )?Adding an expected failure for .*? on',
         'Make .*? (?:not |non-)flaky',
         'Refactoring',
-        '(?:Partial(?:ly) )?Revert(?:ed)?',
+        '(?:(?:Partial(?:ly)?|Speculative) )?Revert(?:ed|ing)?',
         '(?:Fix )?Heap-use-after-free in',
         'CSS Animations: add interpolation test for',
         'Remove dead code from',
@@ -311,7 +354,9 @@ confirmed:
         'Clean ?ups?',
         'Remove TreatNullAs=NullString for',
         'Make calls to AtomicString\\(const String&\\) explicit in',
-        'Widen timeout (?:expectation|suppression)s? for'
+        'Widen timeout (?:expectation|suppression)s? for',
+        'Use new is\\*Element\\(\\) helper functions',
+        '(?:Oilpan:? )?Build fix (?:after|followup to)'
     ].join('|');
 
     filterRE = new RegExp([
@@ -320,46 +365,42 @@ confirmed:
             '\\[(?:' + category + ')\\]|' +
             misc + ') ',
         '(?:(?:Attempt to|Build) )?Fix(?:e[ds])?(?: for)? (?:' + fix + ')' +
-            '(?:)?',
+            '(?: after)?(?:\\.)?(?: |$)',
+        '^(?:(?:Remove|Delete|Eliminate)d?|Drop) ' +
+            '(?:' + remove + ')(?:\\.)?(?: |$)',
         '(?:(?:Unreviewed|Add|Remove|Fix|Updat(?:e[sd]?|ing)|Cleanup|' +
             'Widen|Broaden|Tighten NeedsRebaseline) )?' +
             '(?:some )?(?:Layout ?)?(?:(?:flaky|text|Android|Mac SVG) )?' +
             '(?:test ?)?expectations? ?' +
             '(?:update[sd]? ?)?(?:(?:for|on|to|after) |(?:\\.)?$)',
-        'Mark (?:test )?.*? (?:as )?(?:a )?' +
-            '(?:flak(?:il)?y|fail(?:ing)?|Slow|broken|Timeout|timing out|' +
+        'Mark(?:ed)? (?:test )?.*? (?:as )?(?:a )?' +
+            '(?:(?:non-)?flak(?:(?:il)?y|ing)|' +
+            'fail(?:ing)?|Slow|broken|Timeout|timing out|' +
             'ImageOnlyFailure|NeedsRebaseline|crashing|crashy)(?:[ .]|$)',
-        '^Suppress(?:ed|ions)?(?: for)?' +
-            '(?: (?:more|a))? flaky (?:layout )?tests?(?:\\.)?$',
+        '^Suppress(?:ed|ions)?(?: for)?(?:' +
+            '(?: (?:more|a))? flaky (?:and failing )?(?:layout )?tests?|' +
+            'flaky .*?|more .*? flakiness' +
+            ')(?:\\.)?$',
         '(?:(?:Update|Unreviewed) )?(?:(?:Manual|More|Final) )?' +
             '(?:(?:windows|Mac|Snowleopard|SVG(?: (?:text|W3C))?) )?' +
-            '(?:(?:Auto|Re)-?)?(?:Re)?baselin(?:e[ds]?|ing)' +
+            '(?:(?:Auto|Re)-?)?(?:Re)?base(?:lin(?:e[ds]?|ing))?' +
             '(?:results)?(?: (?:for|after))?(?: |(?:\\.)?$)',
         '^(?:(?:Unreviewed|Unofficial) )?gardening(?:\\.)?(?: |$)',
-        '^Layout Test .*? is (?:no longer )?(?:flaky|failing)$',
-        '^Remove no-longer-flaky expectations$',
-        '^Delete unnecessary expectation\\.$',
-        '^Remove implied Skip\\.$',
-        '^(?:Remove|Delete) empty director(?:y|ies)(?:\\.)?$',
-        '^Removed? unused (?:file|variable|function)(?:\\.)?$',
+        '^Layout ?Test .*? is (?:no longer )?(?:flaky|failing)$',
+        '^Add suppressions for flaky .*? tests\\.$',
+        '^Skia suppressions rebaseline\\.$',
+        '^Some more suppressions\\.$',
         '^Unskip .*?(?:\\.$)?',
         '^Adding expectations for .*?$',
-        '^Remove custom expectation for .*?$',
         '^De-?flake (?:LayoutTest )?.*?$',
-        '^Eliminate flakiness for .*?$',
         '^Another attemped win component build fix$',
         '^Add flaky tests\\.$',
-        '^Skia suppressions rebaseline\\.$',
-        '^Suppressed more flaky and failing tests\\.$',
-        '^Some more suppressions\\.$',
-        '^Suppress(?:ed|ions)? flaky .*?\\.$',
-        '^Suppress(?:ed|ions)? more .*? flakiness\\.$',
-        '^Add suppressions for flaky .*? tests\\.$',
-        '^Remove (?:calls to|usage of) deprecated V8 APIs(?::| (?:in|from)) ',
         '^(?:Remove|Drop|Fix) (?:(?:all|more) )?deprecated (?:V8 )?APIs? ' +
             '(?:(?:usaged?|calls) )?(?:in|from) ',
         '^Update .+? classes to use OVERRIDE / FINAL when needed$',
-        '^Drop \\[LegacyImplementedInBaseClass\\] from .+? IDL interface$'
+        '^(?:Have|Make) (?:Document|Element|Node)' +
+            '::[a-zA-Z]+\\(\\) return a reference$',
+        '^whitespace change$'
     ].join('|'), 'i');
 
     each.call(commitMessages, hideCommit);
@@ -438,7 +479,7 @@ confirmed:
     request(firstNextLink.href, function nextPageLoader(nextDoc) {
         var nextShortlog, hashLink, commit, nextLink;
 
-        nextShortlog = nextDoc.querySelector('.shortlog');
+        nextShortlog = nextDoc.querySelector('.shortlog, .log');
 
         if (!nextShortlog) {
             return;

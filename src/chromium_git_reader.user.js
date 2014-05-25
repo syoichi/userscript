@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
 /* jshint maxlen: 80 */
@@ -75,7 +75,7 @@ confirmed:
         return;
     }
 
-    shortlog = doc.querySelector('.shortlog');
+    shortlog = doc.querySelector('.shortlog, .log');
 
     if (!shortlog) {
         return;
@@ -92,23 +92,24 @@ confirmed:
         'tracing_ui\\.cc',
         'gpu',
         'gfx',
+        'gl_helper',
         'win8',
         'Windows perf bots',
-        'mac',
-        'mac notifications',
-        'Core Animation',
+        'mac(?:Views| notifications)?',
+        'Core ?Animation',
+        '(?:Mac )?AVFoundation',
+        'Mac Video Capture',
         'Linux(?: Sandbox)?(?: (?:unit)?tests?)?',
         'sandbox_linux_unittests',
         'linux[- _]aura(?: clang)?',
+        'Breakpad Linux',
+        'Linux (?:NaCl|Zygote|Breakpad)',
         'x11(?:/test)?',
         'GTK',
-        '(?:linux_aura/)?chrome ?os',
-        'CrOS(?: EULA)?',
-        'cros_library',
-        'cros-asan',
-        'Linux/CrOS',
+        '(?:(?:linux(?:_aura)?)[\\- _/])?(?:cros|chrome ?os)' +
+            '(?:[\\- _/](?:EULA|dbus|library|asan|interface))?',
         '(?:(?:DMP|Telemetry) / |ASan/)?Android' +
-            '(?: (?:buildbot|bb|WebView(?: build)?|' +
+            '(?: (?:buildbot|bb|WebView(?: build)?|Video|' +
             'perf(?: tests?)?(?: runner)?|envsetup|memreport|Chromoting|' +
             '/ (?:Telemetry|DMP|dmprof|memreport))|Perf|/clang)?',
         'android_webview',
@@ -120,14 +121,14 @@ confirmed:
         'file_manager',
         'file_handler_util',
         'File manager drive API',
+        'Gallery\\.app',
         'AudioPlayer',
         'kiosk',
         'cryptohome',
         'shill \\(chromeos\\)',
-        'P?NaCl(?:[\\- ]?(?:SDK(?: docs)?|IRT|test|Coordinator|' +
-            'doc(?:s|umentation)?|security hardening))?',
-        'Linux (?:NaCl|Zygote)',
-        'NaCl Linux sandbox',
+        '(?:Non-?SFI )?P?NaCl(?:[\\- ]?(?:SDK(?: docs)?|IRT|test|Coordinator|' +
+            'doc(?:s|umentation)?|security hardening|Sandbox|' +
+            'Linux(?: sandbox)?))?',
         'POSIX',
         'pepper',
         'PPAPI(?:/NaCl)?',
@@ -135,6 +136,7 @@ confirmed:
         'Disk Cache',
         'Test',
         'LayoutTests',
+        'I-?Spy',
         'Valgrind(?:/Heapcheck| Mac)?',
         'Heapcheck',
         'Chromoting(?: (?:Host|browser_tests|client))?',
@@ -147,8 +149,8 @@ confirmed:
         'Omnibox UMA Logging',
         'Add a new histogram',
         'VariationsService',
-        '(?:More )?(?:win-)?TSAN(?: ?v\\d+)?(?: suppressions?)?',
-        'lsan',
+        '(?:More )?(?:win-)?TSAN(?:/Win)?(?: ?v\\d+)?(?: suppressions?)?',
+        '[alm]san',
         '(?:(?:Style|Code) )?Clean[\\- ]?up',
         'Docserver',
         'Refactoring',
@@ -175,6 +177,7 @@ confirmed:
         '(?:Update )?Perf expectations',
         'GTTF',
         'test launcher',
+        'test_runner',
         'Semi-Automated Commit',
         'Fixed flaky test',
         'Perf scripts',
@@ -191,7 +194,10 @@ confirmed:
         'interactive tests',
         'IPC fuzzer',
         'test-cert generation scripts',
-        'device/bluetooth'
+        'device/bluetooth',
+        'Bluetooth(?: Device)?',
+        'unit_tests',
+        'LeakSanitizer'
     ].join('|');
     category = [
         'CC',
@@ -201,19 +207,23 @@ confirmed:
         'Linux(?:-Only)?',
         'Gtk',
         'mac',
-        'OSX',
+        'OS ?X',
         'Cocoa',
-        'rAC,? ?OSX',
+        'OriginChip, OSX',
+        'rAC,? ?(?:OSX|Android)',
+        'OSX,? rAC',
         'Chrome ?OS',
         'cros(?:,? (?:login|i18n|multi-profile))?',
-        '(?:Chromoting )?android(?: |_)?' +
-            '(?:webview|webivew|Buildbot|Chromoting|nNTP)?',
+        '(?:(?:Chromoting|Mirror) )?android[ _]?' +
+            '(?:webview|webivew|Buildbot|Chromoting|nNTP|Java Bridge)?',
+        'oobe',
         'MIPS',
         'Chromoting',
         'Remoting',
         'chromed?river',
         'Telemetry',
         'UMA',
+        'Metrics',
         'Variations?',
         'NaCl ?(?:SDK)?(?: ?(?:browser_tester|Docs|AppEngine))?',
         'PPAPI',
@@ -227,39 +237,39 @@ confirmed:
         'tools',
         'Perf bisector',
         'Bisect',
-        'Files.app',
+        'Files\\.app(?: Gallery)?',
         'AudioPlayer',
+        'VideoPlayer',
         'Mem ?Sherr?iff?',
         'Sheriff',
         'Refactor(?:ing)?',
         'cr tool',
         'Tests?',
-        'I-Spy',
+        'I-?Spy',
         'Valgrind'
     ].join('|');
     roll = [
-        'lib(?:jingle|FLAC|vpx|webp|jpeg_turbo|phonenumber|usb|srtp|mtp|' +
+        'lib(?:jingle|FLAC|vpx|webp|webm|jpeg_turbo|phonenumber|usb|srtp|mtp|' +
             'addressinput|va|yuv|expat)(?: headers?)?',
         '(?:third_party/)?' +
             '(?:android_tools|openssl|libmtp|accessibility-developer-tools|' +
-            'protobuf|webpagereplay|freetype)',
-        '(?:tools/)?(?:gyp|grit)',
-        '(?:OpenSSL|nss)(?:_revision)?',
+            'protobuf|webpagereplay|freetype|webgl(?:/src)?)',
+        '(?:tools/)?(?:gyp|grit|swarm(?:ing)?_client)(?:/)?',
+        '(?:OpenSSL|[ln]ss)(?:_revision)?',
         'trunk VERSION',
-        'Syzygy(?: (?:DEPS(?: latest release build)?|binaries))',
-        'the latest CrOS system_api',
+        'Syzygy(?: (?:DEPS(?: latest release build)?|binaries))?',
+        '(?:cros|сhromeos)[ _]?system[ _]?api',
+        'ChromeVox',
         'libs for SDK monitor tool',
         'webdriver py bindings',
         'tools/imagediff/image_diff target',
         'XTBs based on .GRDs',
         'linux-release-64/sizes/chrome-bss/bss expectations(?:\\.$)?',
         'LSan suppressions(?:\\.$)?',
-        'the new revision of android_tools',
+        'new revision of android_tools',
         '(?:Linux )?reference builds?',
         'sizes',
-        'size expectations?',
-        '(?:test )?expectations?',
-        'the perf expectations',
+        '(?:(?:(?:webgl conformance )?test|(?:the )?perf|size) )?expectations?',
         'perf_expectations.json',
         'suppression',
         'FFmpeg',
@@ -270,7 +280,6 @@ confirmed:
         'WebRTC',
         'lighttpd',
         'ANGLE',
-        'swarm_client',
         'loading_measurement_analyzer',
         '(?:Windows )?Clang',
         'WebGL conformance tests',
@@ -282,7 +291,7 @@ confirmed:
         'SDK tools',
         'net/third_party/nss(?:/ssl)?',
         'cacheinvalidation',
-        'harfbuzz-ng',
+        'harfbuzz(?:-ng)?',
         '\\.DEPS\\.git',
         'leveldb',
         'ICU',
@@ -294,14 +303,14 @@ confirmed:
         'QuickOffice(?: (?:\\(Beta\\)|manifest files))',
         'histograms.xml',
         'build/ios/grit_whitelist.txt',
-        'cros_system_api',
         'valgrind',
         'websocket-client',
         'lcov',
         'snappy',
         'freetype \\(Android-only\\)',
         'Jinja2 \\(Python template library\\)',
-        'CLD2',
+        'CLD[\\- _]?2',
+        'Compact Language Detector v2',
         'crosh_builtin',
         'genius_app',
         'svn:ignore',
@@ -310,7 +319,7 @@ confirmed:
         'XZ Utils',
         'swarming_client',
         'gtest',
-        'polymer',
+        '(?:embedded )?polymer',
         '(?:Windows )?GN(?: binary)?',
         'NaCl',
         'smhasher',
@@ -318,53 +327,66 @@ confirmed:
         'fontconfig',
         'findbugs',
         'KeystoneRegistration.framework',
-        'html-office-public'
+        'html-office-public',
+        'hunspell',
+        'pyauto',
+        'W3C test repos',
+        'CDM interface',
+        'tlslite',
+        'pdfium'
     ].join('|');
     fix = [
         '(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|' +
-            'Chrome(?: for Android| ?OS)?|Linux/Gtk|' +
-            '(?:the )?G?TV|non-aura|win(?:64)?|Windows GN|clang) )?' +
-            'build(?: error)?(?: (?:after|for) |\\.$)?',
+            'Chrome(?: for Android| ?OS)?|Linux/Gtk|(?:64 bit )?Mac|' +
+            '(?:the )?G?TV|non-aura|win(?:64)?|(?:Windows|mac) GN|clang) )?' +
+            'build(?: (?:error|issue))?(?: (?:after|for) |\\.$)?',
         'checkdeps$',
         '(?:a )?typos?(?:\\.)?$',
         '(?:a )?memory leak(?: in |\\.$)',
         'unused variable assignement\\.$',
         'build breakage on ',
+        'reference builds on ',
         'compile for ',
         '(?:win64 )?compilation error(?:\\.)?$',
         'a compilation error with ',
         'compile error on ',
+        'GTK compilation after',
         'use after free ',
         'use-after-free$',
         'build break for ',
         'broken build\\.$',
         'bustage$',
-        'error in ',
+        'bustage with ',
+        '(?:error|assert) in ',
         'unit test for ',
         'a crasher$',
         'Android compile',
-        '(?:another )?missing #include build error from '
+        '(?:another )?missing #include build error from ',
+        '"unreachable code" warnings \\(MSVC warning 4702\\) in ',
+        'memory leak in '
     ].join('|');
     remove = [
         'empty directory(?:\\.)?$',
         'unreferenced variables\\.$',
         '(?:(?:remaining|unneeded) )?' +
             '(?:obsolete|Skia|LSan) suppressions?(?:\\.)?$',
-        'obsolete comment\\.$',
+        'obsolete comment(?:\\.)?$',
         'stale expectations$',
         '(?:some )?unused (?:variable )?' +
             '(?:declarations?|definitions?|dependency|code|property|headers?|' +
-            'unit tests?|field|strings?|function|actions?|' +
-            'var(?:iable)?)(?:\\.)?$',
+            'unit tests?|field|files?|strings?|function|actions?|resources?|' +
+            'var(?:iable)?|includes?)(?:\\.)?$',
         'unnecessary code for ',
+        'unnecessary condition\\.',
         'unnecessary macro\\.$',
+        'unneeded includes?(?:\\.)?$',
         'test suppression\\.$',
         'a spurious space$',
         'dead code(?:\\.)?$'
     ].join('|');
     misc = [
         'Reland',
-        '(?:(?:Manual|Partial|Experimental) )?Revert?',
+        '(?:(?:Manual|Partial|Experimental|Tentatively) )?Revert?',
         'Use a direct include of ' +
             '(?:strings|time|the (?:message_loop|shared_memory)) ' +
             'headers? in',
@@ -372,25 +394,28 @@ confirmed:
         '\\[Mac\\]\\[MC\\]',
         '\\[rAc\\] ?\\[OSX\\]',
         'Disabl(?:ed?|ing) flaky(?: test)?',
-        'Add(?:ed|s)? (?:unit ?|a )?test(?:case)?s?(?: for)?',
-        'Clean(?:ing|ed)?[- ]?ups?',
+        'Add(?:ed|s|ing)? (?:a )?(?:(?:manual|browser) )?(?:(?:unit|perf) ?)?' +
+            'test(?:case)?s?(?: for)?',
+        '(?:Minor )?Clean(?:ing|ed)?[- ]?ups?',
         'Add(?:s|ed)? (?:(?:more|a) )?(?:(?:new|UMA) )?' +
             '(?:histogram|metric|UMA(?: (?:entr(?:y|ie)))?|stat)s?' +
             '(?: (?:for|to))?',
         'Suppress (?:an? )?(?:(?:new|quic|intentional|memory) )?' +
-            'leaks?(?: (?:in|of|after|from))?',
-        'Fix memory leak in',
+            '(?:error|issue|leak)s?(?: (?:in|of|after|from))?',
         'add missing #includes? of <algorithm>, needed on VS2013 for',
         'Build fix after',
         'Remove (?:usages? of )?deprecated V8 APIs? (?:from|in|usage)',
-        'Add base:: to (?:straggling )?string16s? in'
+        'Add base:: to (?:straggling )?string16s? in',
+        'Add logging for',
+        'Refactor',
+        'Whitespace change to'
     ].join('|');
 
     filterRE = new RegExp([
         '^(?:(?:' + colons + '):|\\[(?:' + category + ')\\]:?|' + misc + ') ',
-        '^(?:DEPS )?' +
-            '(?:(?:(?:Ro|Pu)ll|Upgrad|Updat)(?:ing|e?[sd]?)?|Uprev) ' +
-            '(?:DEPS )?(?:(?:for|to) )?(?:pick up )?' +
+        '^(?:DEPS:? )?' +
+            '(?:(?:(?:Ro|Pu)ll|Upgrad|Updat|Bump)(?:ing|e?[sd]?)?|Uprev) ' +
+            '(?:DEPS )?(?:(?:for|to|of) )?(?:pick up )?(?:the )?(?:latest )?' +
             '(?:' + roll + ')(?: (?:expectations|suppressions))?' +
             '(?: (?:from|after|version))?(?: DEPS)?(?: (?:for|to))?',
         '^(?:' + roll + ') (?:DEPS )?roll(?: to)?(?:\\.)?',
@@ -423,7 +448,10 @@ confirmed:
         '^Webgl conformance test expectations update(?:\\.)?$',
         '^Update (?:some )?uses of (?:Value|UTF conversions|char16) ' +
             '(?:in .*? )?to use the base:: namespace\\.$',
-        '^Back out trunk r\\d+(?:\\.)?$'/*,
+        '^Back out trunk r\\d+(?:\\.)?$',
+        '^Disable a flaky test\\.$',
+        '^Style nits$',
+        '^Compile fix for Clang$'/*,
         '\b(?:Files\\.app|UMA|histogram|DCHECK)\b'*/
     ].join('|'), 'i');
 
@@ -503,7 +531,7 @@ confirmed:
     request(firstNextLink.href, function nextPageLoader(nextDoc) {
         var nextShortlog, hashLink, commit, nextLink;
 
-        nextShortlog = nextDoc.querySelector('.shortlog');
+        nextShortlog = nextDoc.querySelector('.shortlog, .log');
 
         if (!nextShortlog) {
             return;

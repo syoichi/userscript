@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
 /* jshint maxlen: 80 */
@@ -19,7 +19,7 @@ confirmed:
 (function executeMcShortlogReader(win, doc, each) {
     'use strict';
 
-    var shortlog, prefix, commits, colons, category, update, merge, misc,
+    var shortlog, prefix, commits, colons, category, update, merge, fix, misc,
         filterRE, markings, mozillaCentralHash, firstHashLink, firstNextLink;
 
     function hideCommit(commit) {
@@ -90,30 +90,38 @@ confirmed:
     prefix = '^(?:(?:(?:Bug |b=)\\d+[,.:]? )+|No bug:?)?' +
         '(?:' +
         '(?:' +
-        '(?:\\()?(?:Part|Patch)[ .]?\\d+(?:[a-z]+|/\\d+)?(?:\\))?|' +
+        '(?:\\()?(?:Part|Patch)[ .]?[\\da-z]+(?:/\\d+)?(?:\\))?|' +
         '(?:\\[)?\\d+/\\d+(?:\\])?' +
         ')' +
-        '(?::| -)? ' +
+        '(?: ?:| -)? ' +
         ')?' +
         '(?:';
 
     colons = [
-        'ARM',
+        'GTK(?:\\d+)?',
+        '(?:IonMonkey )?MIPS(?: port)?',
+        'ARM(?: simulator)?',
         'B2G(?: (?:[SM]MS|RIL|Multi-SIM|CDMA|Telephony|3G|DSDS|SMS & MMS|' +
             'BT|Bluetooth|NFC))?',
-        'follow[\\- ]up',
         'Browser API',
         'WebTelephony',
         'SimplePush',
         'Rtsp',
         'Test',
-        'ARM simulator',
-        'MIPS port',
-        'GTK'
+        'Fix ASSERTION',
+        'Assertion failure',
+        'follow[\\- ]?up',
+        'Win8',
+        'Refactor'
     ].join('|');
     category = [
-        'B2G(?: desktop)?',
-        'b2g-ril',
+        'Metro',
+        'Mac',
+        'OSX',
+        'Linux',
+        'GTK(?:\\d+)?',
+        'Qt',
+        'B2G(?:[\\- ](?:desktop|ril))?',
         'gonk-jb',
         '[SM]MS',
         'MMI',
@@ -122,35 +130,32 @@ confirmed:
         'blue?droid(?: OPP)?',
         '(?:OPP )?cleanup',
         'Buri',
+        'Tarako',
         'ACC',
         'WIFI(?:-hotspot)?',
-        'Contacts API',
-        'NetworkStats API',
-        'Download API',
+        '(?:Contacts|NetworkStats|Download) API',
         'User Story',
         'Suplementary Services',
         'wasabi',
         'fig',
         'Marionette(?: Client)?',
-        'Metro',
-        'Linux',
-        'Qt',
-        'Messaging',
-        'Messages',
+        'Messag(?:ing|es)',
         'HFP',
         'Dialer',
         'Flatfish',
         'RTSP',
-        'keyboard'
+        'keyboard',
+        'mozrunner',
+        'mozcrash',
+        'mozversion',
+        'Camera',
+        'Roku'
     ].join('|');
     update = [
-        '(?:bundled )?libpng',
-        'libcubeb',
-        'libvorbis',
-        'libopus',
-        'libvpx',
-        'pdf\\.js',
-        'vtt\\.js',
+        '(?:(?:bundled|in-tree) )?' +
+            'lib(?:png|cubeb|vorbis|opus|vpx|jpeg-turbo|nestegg|ffi)',
+        '(?:pdf|vtt)\\.js',
+        'moz(?:device|version|log)',
         'NS(?:S|PR)',
         'psutil',
         'talos(?:\\.json)?',
@@ -167,7 +172,10 @@ confirmed:
         'Robotium',
         'freetype',
         'acorn',
-        'Skia'
+        'Skia',
+        'ASan Clang',
+        'virtualenv',
+        'sccache'
     ].join('|');
     merge = [
         '(?:(?:latest|last) )?(?:PGO-)?green',
@@ -175,85 +183,92 @@ confirmed:
         '(?:mozilla-)?central',
         '(?:(?:mozilla|b2g)-)?inbound',
         'm-[ci]',
-        'b-i',
-        'birch',
+        '(?:b|b2g)-i',
+        'b2g',
         '[fm]x-?team',
-        'f-t',
-        'b2g-i'
+        'birch',
+        'f-t'
+    ].join('|');
+    fix = [
+        '(?:(?:Minor|merge|tentative|test|(?:(?:windows|Mac) )?build|Mac) )?' +
+            'bustage(?: (?:in the wake of|on|for))?',
+        '(?:follow[\\- ]?up )?(?:(?:(?:Windows|ASAN) )?bustage|leaks|build)' +
+            ' on (?:a )?CLOSED TREE',
+        '(?:a )?typos?',
+        'indentation',
+        '#include ordering',
+        'minor leak',
+        'leaks in',
+        'build',
+        'intermittent',
+        'tests?',
+        'small bugs',
+        'mach build --jobs',
+        'Attempted',
+        'bug \\d+[.,]',
+        'GCC warnings? about',
+        'backout of bugs'
     ].join('|');
     misc = [
         'Revert',
         '(?:Speculatively )?Back(?:ed|ing)? ?out',
         'Clean ?ups?',
         'No bug, Automated',
-        'Bumping gaia\\.json for',
-        'Bumping manifests',
-        'Test fix',
-        'Tests? for',
-        'Follow-up to fix build bustage on',
-        'Fix (?:Mac )?bustage for',
-        'Fix indentation in',
-        'Fix #include ordering in',
-        'Fix build',
-        'Minor bustage fix',
+        'Bumping (?:gaia\\.json for|manifests)',
+        'Test cleanup for plugin enabledState usage,',
         'Switch from NULL to nullptr in .*?[.;]',
         'Don\'t use NS_MEMORY_REPORTER_IMPLEMENT (?:for|in)',
-        'Test(?:ing|s)?\\.',
-        'followup, fix bustage in the wake of',
-        '(?:Create )?(?:Mochi|Ref)tests? for',
-        'Test case for',
-        'Followup bustage fix for',
-        'Bustage fix for',
-        'Fix for intermittent',
-        'Fix bustage',
-        'Follow-up fix for bug \\d+',
-        'Fix small bugs\\.',
-        'Follow-up to fix bustage on a CLOSED TREE\\.',
-        'Followup to fix bustage\\.',
-        'tentative bustage fix',
-        'Follow-up to fix bustage\\.',
-        'Fix merge bustage\\.',
-        'Attempted fix\\.',
-        'Fix mach build --jobs\\.',
         'RIL implementation\\.',
         'Delete unused resources\\.',
-        'fix windows build bustage\\.',
-        'upload a new talos\\.zip file\\.'
+        'upload a new talos\\.zip (?:to|file\\.)',
+        'Suppress clang and gcc warnings in third-party',
+        'IPDL serialization for',
+        'Use a typed enum for',
+        '(?:\\(no bug\\) )?Remove whitespace at end of line in',
+        'AutoPushJSContext in',
+        'Remove DataContainerEvent dependency from',
+        'Add(?:s|ed|ing)? assertions? in',
+        'Mark test as failing',
+        'Use JS::CallArgs instead of',
+        'Add a comment to',
+        'Trial fix for',
+        'Run the reftests in',
+        'Followup bustage fix\\.',
+        'Use JS::SourceBufferHolder in',
+        'implement test coverage for',
+        'Replace MOZ_ASSUME_UNREACHABLE in',
+        'Pass .*?(?: and .*?)? by value instead of const-ref\\.',
+        'Add OMTA tests for',
+        'Add (?:inner|outer) window assertions to'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
         '(?:(?:' + colons + ') ?(?::| -)|' + misc + ') ',
         '(?:(?:\\[|\\()(?:' + category + ')(?:\\]|\\))| )+:?',
-        '(?:Update|Upgrade|Uplift)(?: to)? (?:' + update + ')(?: source)?' +
-            '(?: to (?:version|Firefox[. ])?)?',
+        '(?:Update|Upgrade|Uplift|Bump)(?: to)? (?:' + update + ')' +
+            '(?: source)?(?: to (?:version|Firefox[. ])?)?',
         'Merge (?:' + merge + ')(?: (?:(?:in)?to|and) )?',
-        '(?:Add(?:s|ed|ing)?|Fix(?:e[ds]|ing)?|Updat(?:e[sd]?|ing)) ' +
-            '(?:(?:a|new|some) )?(?:mochi|(?:unit|xpcshell|more|crash) )?' +
-            'tests?(?: (?:case|fixe?)s?)?(?: (?:for|to) |\\.|,)?',
-        '(?:Add|Use?)(?:ed|s|ing)? NS_DECL_THREADSAFE_ISUPPORTS(?: in )?',
-        'fix (?:leaks|bustage) on (?:a )?CLOSED TREE$',
-        'Bustage follow-up\\.$',
-        'Follow-?up fix(?:es) for bug \\d+[.,]',
-        'Followup to fix build on a CLOSED TREE$',
-        'Fix (?:Windows|ASAN) bustage on a CLOSED TREE$',
-        'test for bug \\d+$',
-        'Add reftest\\.',
-        'Fix typo(?:\\.$|in test | )',
-        'No bug: Make some whitespace changes on a CLOSED TREE\\.',
-        'followup followup, fix followup bustage on a CLOSED TREE$',
-        'crashtests for Bug \\d+',
-        'Fixup tests\\.',
-        'Update test case\\.',
-        'Fixup for Bug \\d+\\.',
-        'Crashtest for Bug \\d+(?:\\.)?$',
-        'Followup to fix test bustage',
-        '(?:Crash ?)?Tests?\\.$',
-        'Bustage fix\\.$',
-        'Added test case\\.$',
+        '(?:(?:follow[\\- ]?up)+,? (?:to )?)?' +
+            'Fix(?:e[ds]|ing|up)? (?:for )?(?:' + fix + ')' +
+            '(?: in)?(?:\\.)?(?: |$)',
+        '(?:' + fix + ')? fix(?: for)?(?:\\.)?(?: |$)',
+        '(?:(?:Add(?:s|ed|ing)?|Create|Fix(?:e[ds]|ing)?|' +
+            'Updat(?:e[sd]?|ing)) )?' +
+            '(?:(?:a|new|some) )?' +
+            '(?:mochi|ref|crash ?|(?:unit|xpcshell|more) )?' +
+            'test(?:ing|s)?' +
+            '(?: (?:case|fixe?)s?)?(?: (?:for|to) |[.,]|(?:\\.)?(?: |$))?',
+        '(?:crash)?tests? for Bug \\d+(?:\\.)?(?: |$)?',
+        '(?:build )?Bustage (?:follow[\\- ]?up)?\\.$',
         'Build .*? in unified mode(?:[.; ]|$)',
+        '(?:Add|Use?)(?:ed|s|ing)? NS_DECL_THREADSAFE_ISUPPORTS(?: in )?',
+        'No bug: Make some whitespace changes on a CLOSED TREE\\.',
         'merge(?: again)?$',
         '(?:Touch )?CLOBBER\\.(?: |$)',
-        'build bustage$'
+        'Remove unused variables[., ]?',
+        'Remove unnecessary whitespace[., ]?',
+        'Intermittent browser_',
+        'Double the test timeout$'
     ].join('|') + ')', 'i');
 
     each.call(commits, hideCommit);

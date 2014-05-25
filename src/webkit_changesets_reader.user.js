@@ -12,7 +12,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
 /* jshint maxlen: 80 */
@@ -134,6 +134,8 @@ confirmed:
         'Build fix',
         'Crashing Test',
         'Flaky Test',
+        'Layout ?Tests?',
+        'TestWebKitAPI',
         'Gardening',
         'Clean up',
         'ASSERTION FAILED',
@@ -142,14 +144,20 @@ confirmed:
         'OwnPtr',
         'CStack(?: Branch)?',
         'WebKit Bot Watcher\'s Dashboard',
-        'WK[12]?'
+        'WebKitPerfMonitor',
+        'bmalloc',
+        'WK2 iOS',
+        'WebKit2/iOS'/*,
+        'WK[12]?'*/
     ].join('|');
     category = [
-        'WK[12]?',
-        'WebKit[12]?',
+        // '(?:WK|WebKit)[12]?',
+        'iOS(?: (?:WK|WebKit)[12]?)?',
+        // 'Mac',
         'Cocoa',
-        'Qt',
-        'BlackBerry',
+        // 'Qt',
+        // 'BlackBerry',
+        'Win',
         'EFL',
         'EGL',
         'Coordinated ?Graphics',
@@ -158,7 +166,7 @@ confirmed:
         'Nix',
         'Jhbuild',
         '(?:Win)?Cairo',
-        'GStreamer',
+        'GSt(?:reamer)?',
         'Soup',
         'NRWT',
         'TexMap',
@@ -174,7 +182,9 @@ confirmed:
         'buildbot',
         'ASAN',
         'GLIB',
-        'GDB'
+        'GDB',
+        'ARM64',
+        'ftlopt'
     ].join('|');
     fix = [
         'release',
@@ -194,7 +204,7 @@ confirmed:
         'EFL',
         'GTK(?:\\+)?(?: port)?',
         '(?:x86 )?32-?bits?',
-        'ARM',
+        'ARM(?:v7|64)?',
         'FTL',
         'GCC',
         'buil?d(?: break)?',
@@ -202,17 +212,18 @@ confirmed:
         'clean engineering',
         'bindings tests',
         'compile error in',
-        'typo',
+        '(?:a )?typos?',
         'indention of',
         'blind attempt at a',
         'one more',
         'Speculative',
         '(?:\\.)?$',
         'layout test$',
-        '(?:Another )?follow-up'
+        '(?:Another )?follow-up',
+        'test'
     ].join('|');
     misc = [
-        'Merged?',
+        '(?:Re-)?Merged?',
         'Revert(?:ed)?',
         '(?:(?:Tagging the|Branch) )?WebKitGTK\\+(?: for)?',
         'Add a test for',
@@ -228,7 +239,9 @@ confirmed:
         'test correction after',
         'IDB: TestExpectations batch -',
         'Move to using std::unique_ptr for',
-        'Update test expectations after'
+        'Update test expectations after',
+        'Update the build fix for',
+        'ARM64 buildfix after'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
@@ -240,10 +253,10 @@ confirmed:
             'Fix(?:e[ds]|ing)?(?: for)?(?: the)? ' +
             '(?:' + fix + ')(?: (?:for|(?:builds? )?after)|builds?\\.)?',
         '(?:(?:extended )?(?:(?:Yet )?Another|Attempt(?:ed)?(?: at)?) )?' +
-            '(?:the )?(?:' + fix + ')' +
+            '(?:Speculative )?(?:the )?(?:' + fix + ')' +
             '(?: (?:minimum|Speculative))? (?:builds? ?)?Fix(?:e[ds])?' +
             '(?: (?:following|(?:attempt )?after)|\\.)?',
-        '(?:New|Remove) (?:Tag|Branch)(?:\\.)?$',
+        '(?:New|Remove|Delete) (?:Tag|Branch)(?:\\.)?$',
         'Versioning(?:\\.)?$',
         '“Versioning.”$',
         'roll(?:ing|ed)? ?out(?: of)?',
@@ -275,7 +288,8 @@ confirmed:
         'Remove Duplicate Tag\\.$',
         'test correction\\.$',
         'Small build fix for the GTK\\+ CMake port$',
-        'test expectation update\\.$'
+        'test expectation update\\.$',
+        'test gardening\\.$'
     ].join('|') + ')', 'i');
 
     Array.prototype.forEach.call(commitMessages, function hide(commitMessage) {
