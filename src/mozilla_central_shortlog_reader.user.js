@@ -122,6 +122,9 @@ confirmed:
         'GTK(?:\\d+)?',
         'Qt',
         'B2G(?:[\\- ](?:desktop|ril))?',
+        'mobile',
+        'Flame',
+        'NFC',
         'gonk-jb',
         '[SM]MS',
         'MMI',
@@ -155,7 +158,7 @@ confirmed:
         '(?:(?:bundled|in-tree) )?' +
             'lib(?:png|cubeb|vorbis|opus|vpx|jpeg-turbo|nestegg|ffi)',
         '(?:pdf|vtt)\\.js',
-        'moz(?:device|version|log)',
+        'moz(?:device|version|log|test)',
         'NS(?:S|PR)',
         'psutil',
         'talos(?:\\.json)?',
@@ -239,7 +242,8 @@ confirmed:
         'Replace MOZ_ASSUME_UNREACHABLE in',
         'Pass .*?(?: and .*?)? by value instead of const-ref\\.',
         'Add OMTA tests for',
-        'Add (?:inner|outer) window assertions to'
+        'Add (?:inner|outer) window assertions to',
+        '(?:Replace|Remove) AutoPushJSContext in'
     ].join('|');
 
     filterRE = new RegExp(prefix + [

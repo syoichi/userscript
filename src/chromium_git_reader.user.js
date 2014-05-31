@@ -90,7 +90,7 @@ confirmed:
     colons = [
         'cc',
         'tracing_ui\\.cc',
-        'gpu',
+        'gpu(?: testing)?',
         'gfx',
         'gl_helper',
         'win8',
@@ -102,6 +102,7 @@ confirmed:
         'Linux(?: Sandbox)?(?: (?:unit)?tests?)?',
         'sandbox_linux_unittests',
         'linux[- _]aura(?: clang)?',
+        'linux_ash',
         'Breakpad Linux',
         'Linux (?:NaCl|Zygote|Breakpad)',
         'x11(?:/test)?',
@@ -225,7 +226,7 @@ confirmed:
         'UMA',
         'Metrics',
         'Variations?',
-        'NaCl ?(?:SDK)?(?: ?(?:browser_tester|Docs|AppEngine))?',
+        'NaCl ?(?:SD[KL])?(?: ?(?:browser_tester|Docs|AppEngine))?',
         'PPAPI',
         'Media ?Galleries',
         'Memory Sheriff',
@@ -276,7 +277,7 @@ confirmed:
         'Opus',
         'Breakpad',
         'trace[\\- ]viewer',
-        'Skia',
+        '(?:Manual )?Skia',
         'WebRTC',
         'lighttpd',
         'ANGLE',
@@ -333,7 +334,8 @@ confirmed:
         'W3C test repos',
         'CDM interface',
         'tlslite',
-        'pdfium'
+        'pdfium',
+        'buildtools'
     ].join('|');
     fix = [
         '(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|' +
@@ -451,7 +453,8 @@ confirmed:
         '^Back out trunk r\\d+(?:\\.)?$',
         '^Disable a flaky test\\.$',
         '^Style nits$',
-        '^Compile fix for Clang$'/*,
+        '^Compile fix for Clang$',
+        '^net: a batch of HSTS preloaded updates\\.$'/*,
         '\b(?:Files\\.app|UMA|histogram|DCHECK)\b'*/
     ].join('|'), 'i');
 
