@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.6
+// @version        0.0.7
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -93,33 +93,45 @@ confirmed:
 
                 link.href = url + '/full';
             }
-        },/*
+        },
         'gyazo.com': {
-            urlRE: /^(http:\/\/)(gyazo\.com\/[\da-f]{32})(?:\.png)?(?:\?\d+)?$/,
+            urlRE: /^(http:\/\/)(gyazo\.com\/[\da-f]{32}\.png)(?:\?\d+)?$/,
             replaceLink: function forGyazo(link, url) {
-                var frag;
-
-                frag = this.urlRE.exec(url);
+                var frag = this.urlRE.exec(url);
 
                 if (!frag) {
                     return true;
                 }
 
-                link.href = frag[1] + 'cache.' + frag[2] + '.png';
+                link.href = frag[1] + 'cache.' + frag[2];
             }
-        },*/
+        },
         'yfrog.com': {
             urlRE: /^(https?:\/\/)(yfrog\.com\/)([\da-zA-Z]+)$/,
             replaceLink: function forYfrog(link, url) {
-                var frag;
-
-                frag = this.urlRE.exec(url);
+                var frag = this.urlRE.exec(url);
 
                 if (!frag) {
                     return true;
                 }
 
                 link.href = frag[1] + 'twitter.' + frag[2] + 'z/' + frag[3];
+            }
+        },
+        'www.amazon.co.jp': {
+            urlRE: new RegExp(
+                '^(https?://www.amazon.co.jp/)' +
+                    '(?:(?:.+?|o|gp|exec/obidos)/)?(?:dp|ASIN|product)' +
+                    '(/(?:\\d{10}|B00[\\dA-Z]{7}))/'
+            ),
+            replaceLink: function forAmazon(link, url) {
+                var frag = this.urlRE.exec(url);
+
+                if (!frag) {
+                    return true;
+                }
+
+                link.href = frag[1] + 'dp' + frag[2];
             }
         },
         'flic.kr': {
