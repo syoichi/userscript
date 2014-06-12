@@ -103,6 +103,7 @@ confirmed:
         'ARM(?: simulator)?',
         'B2G(?: (?:[SM]MS|RIL|Multi-SIM|CDMA|Telephony|3G|DSDS|SMS & MMS|' +
             'BT|Bluetooth|NFC))?',
+        'NFC',
         'Browser API',
         'WebTelephony',
         'SimplePush',
@@ -112,7 +113,8 @@ confirmed:
         'Assertion failure',
         'follow[\\- ]?up',
         'Win8',
-        'Refactor'
+        'Refactor',
+        'Bustage fix'
     ].join('|');
     category = [
         'Metro',
@@ -129,7 +131,7 @@ confirmed:
         '[SM]MS',
         'MMI',
         'CDMA',
-        'Bluetooth',
+        'Bluetooth(?:\\d+)?',
         'blue?droid(?: OPP)?',
         '(?:OPP )?cleanup',
         'Buri',
@@ -152,7 +154,9 @@ confirmed:
         'mozcrash',
         'mozversion',
         'Camera',
-        'Roku'
+        'Roku',
+        'dolphin',
+        'TPS'
     ].join('|');
     update = [
         '(?:(?:bundled|in-tree) )?' +
@@ -178,7 +182,10 @@ confirmed:
         'Skia',
         'ASan Clang',
         'virtualenv',
-        'sccache'
+        'sccache',
+        'marionette(?:-transport)?',
+        'OTS',
+        'PSL'
     ].join('|');
     merge = [
         '(?:(?:latest|last) )?(?:PGO-)?green',
@@ -190,7 +197,8 @@ confirmed:
         'b2g',
         '[fm]x-?team',
         'birch',
-        'f-t'
+        'f-t',
+        'the CLOBBER touch from inbound'
     ].join('|');
     fix = [
         '(?:(?:Minor|merge|tentative|test|(?:(?:windows|Mac) )?build|Mac) )?' +
@@ -201,8 +209,8 @@ confirmed:
         'indentation',
         '#include ordering',
         'minor leak',
-        'leaks in',
-        'build',
+        'leaks? in',
+        '(?:Metro )?build',
         'intermittent',
         'tests?',
         'small bugs',
@@ -243,7 +251,9 @@ confirmed:
         'Pass .*?(?: and .*?)? by value instead of const-ref\\.',
         'Add OMTA tests for',
         'Add (?:inner|outer) window assertions to',
-        '(?:Replace|Remove) AutoPushJSContext in'
+        '(?:Replace|Remove) AutoPushJSContext in',
+        'Update Mozilla to use NSS',
+        'Add non-minified version of'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
@@ -259,7 +269,7 @@ confirmed:
         '(?:(?:Add(?:s|ed|ing)?|Create|Fix(?:e[ds]|ing)?|' +
             'Updat(?:e[sd]?|ing)) )?' +
             '(?:(?:a|new|some) )?' +
-            '(?:mochi|ref|crash ?|(?:unit|xpcshell|more) )?' +
+            '(?:mochi|ref|crash ?|(?:marionette|unit|xpcshell|more) )?' +
             'test(?:ing|s)?' +
             '(?: (?:case|fixe?)s?)?(?: (?:for|to) |[.,]|(?:\\.)?(?: |$))?',
         '(?:crash)?tests? for Bug \\d+(?:\\.)?(?: |$)?',
@@ -267,6 +277,7 @@ confirmed:
         'Build .*? in unified mode(?:[.; ]|$)',
         '(?:Add|Use?)(?:ed|s|ing)? NS_DECL_THREADSAFE_ISUPPORTS(?: in )?',
         'No bug: Make some whitespace changes on a CLOSED TREE\\.',
+        'Touch CLOBBER to reopen the CLOSED TREE\\.$',
         'merge(?: again)?$',
         '(?:Touch )?CLOBBER\\.(?: |$)',
         'Remove unused variables[., ]?',

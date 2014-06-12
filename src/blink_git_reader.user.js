@@ -251,6 +251,9 @@ confirmed:
         'erikchen@chromium.org',
         'mek@chromium.org',
         'qinmin@chromium.org',
+        'sergeyv@chromium.org',
+        'estade@chromium.org',
+        'pmeenan@chromium.org',
         'urvang@google.com',
         'antonm@google.com',
         'vrk@google.com',
@@ -307,7 +310,8 @@ confirmed:
         'MIPS',
         'Sheriff',
         'Gardening',
-        'Refactor(?:ing)?'
+        'Refactor(?:ing)?',
+        'GOM'
     ].join('|');
     fix = [
         '(?:Windows Debug|the Windows component|Mac|Android|oilpan)' +
@@ -347,7 +351,7 @@ confirmed:
         '(?:also )?Adding an expected failure for .*? on',
         'Make .*? (?:not |non-)flaky',
         'Refactoring',
-        '(?:(?:Partial(?:ly)?|Speculative) )?Revert(?:ed|ing)?',
+        '(?:(?:Partial(?:ly)?|Speculative|Psuedo) )?Revert(?:ed|ing)?',
         '(?:Fix )?Heap-use-after-free in',
         'CSS Animations: add interpolation test for',
         'Remove dead code from',

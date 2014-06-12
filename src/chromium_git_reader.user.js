@@ -95,7 +95,7 @@ confirmed:
         'gl_helper',
         'win8',
         'Windows perf bots',
-        'mac(?:Views| notifications)?',
+        'mac(?:Views| (?:notifications|ÜC))?',
         'Core ?Animation',
         '(?:Mac )?AVFoundation',
         'Mac Video Capture',
@@ -152,6 +152,7 @@ confirmed:
         'VariationsService',
         '(?:More )?(?:win-)?TSAN(?:/Win)?(?: ?v\\d+)?(?: suppressions?)?',
         '[alm]san',
+        'AsanCoverage',
         '(?:(?:Style|Code) )?Clean[\\- ]?up',
         'Docserver',
         'Refactoring',
@@ -335,7 +336,9 @@ confirmed:
         'CDM interface',
         'tlslite',
         'pdfium',
-        'buildtools'
+        'buildtools',
+        'font-compression-reference',
+        'Dr\\. Memory'
     ].join('|');
     fix = [
         '(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|' +
@@ -410,7 +413,9 @@ confirmed:
         'Add base:: to (?:straggling )?string16s? in',
         'Add logging for',
         'Refactor',
-        'Whitespace change to'
+        'Whitespace change to',
+        'Windows compile fix after',
+        'Typo fix;'
     ].join('|');
 
     filterRE = new RegExp([

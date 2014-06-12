@@ -147,12 +147,13 @@ confirmed:
         'WebKitPerfMonitor',
         'bmalloc',
         'WK2 iOS',
-        'WebKit2/iOS'/*,
+        'WebKit2/iOS',
+        'REGRESSION \\(iOS WebKit2\\)'/*,
         'WK[12]?'*/
     ].join('|');
     category = [
         // '(?:WK|WebKit)[12]?',
-        'iOS(?: (?:WK|WebKit)[12]?)?',
+        'iOS(?: (?:(?:WK|WebKit)[12]?|WebGL))?',
         // 'Mac',
         'Cocoa',
         // 'Qt',
@@ -198,7 +199,7 @@ confirmed:
         'OS X',
         'Mac(?:-Lion)?',
         'Mountain Lion',
-        'iOS',
+        'iOS(?: Debug)?',
         'Qt(?:/MountainLion)?',
         'BlackBerry debug',
         'EFL',
@@ -225,8 +226,9 @@ confirmed:
     misc = [
         '(?:Re-)?Merged?',
         'Revert(?:ed)?',
+        'Back out',
         '(?:(?:Tagging the|Branch) )?WebKitGTK\\+(?: for)?',
-        'Add a test for',
+        'Add (?:a )?tests?(?: references?)? for',
         'Mark .*? tests as passing for',
         'Buildfix after',
         '\\[Win\\] (?:Unreviewed )?Build fix (?:after|for)',
@@ -241,7 +243,8 @@ confirmed:
         'Move to using std::unique_ptr for',
         'Update test expectations after',
         'Update the build fix for',
-        'ARM64 buildfix after'
+        'ARM64 buildfix after',
+        'Bump version to'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
@@ -259,6 +262,8 @@ confirmed:
         '(?:New|Remove|Delete) (?:Tag|Branch)(?:\\.)?$',
         'Versioning(?:\\.)?$',
         '“Versioning.”$',
+        'Version bump\\.$',
+        '(?:(?:Fix|Bump) )versioning(?:\\.)?$',
         'roll(?:ing|ed)? ?out(?: of)?',
         'Rolled back in',
         '(?:(?:EFL|Windows|(?:Mac )?(?:(?:Mountain )Lion|Mavericks)) )?' +
@@ -289,7 +294,10 @@ confirmed:
         'test correction\\.$',
         'Small build fix for the GTK\\+ CMake port$',
         'test expectation update\\.$',
-        'test gardening\\.$'
+        'test gardening\\.$',
+        'Tagging(?:\\.)?$',
+        'Tagging Safari-[\\d.]+$',
+        'Create the Safari-[\\d.]+ tag\\.$'
     ].join('|') + ')', 'i');
 
     Array.prototype.forEach.call(commitMessages, function hide(commitMessage) {
