@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.7
+// @version        0.0.8
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 30.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80 */
@@ -243,6 +243,7 @@ confirmed:
                         node.classList.contains('tweet-embed') ||
                         node.classList.contains('replies') ||
                         node.classList.contains('permalink') ||
+                        node.classList.contains('AppContainer') ||
                         node.id === 'timeline'
                 )
             ) || (
