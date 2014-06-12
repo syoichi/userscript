@@ -1,17 +1,18 @@
 // ==UserScript==
 // @name           LDR Shortcut Key Customizer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    customize shortcut key in livedoor Reader.
 // @include        http://reader.livedoor.com/reader/
 // @run-at         document-end
+// @grant          GM_openInTab
 // ==/UserScript==
 
 /* User Script info
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 30.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80, camelcase: false */
