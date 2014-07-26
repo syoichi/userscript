@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.8
+// @version        0.0.9
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 30.0(Scriptish 0.1.12)
+        Mozilla Firefox 31.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80 */
@@ -121,8 +121,9 @@ confirmed:
         'www.amazon.co.jp': {
             urlRE: new RegExp(
                 '^(https?://www.amazon.co.jp/)' +
-                    '(?:(?:.+?|o|gp|exec/obidos)/)?(?:dp|ASIN|product)' +
-                    '(/(?:\\d{10}|B00[\\dA-Z]{7}))/'
+                    '(?:(?:.+?|o|gp|exec/obidos)/)?' +
+                    '(?:dp|ASIN|product|aw(?:/d)?)' +
+                    '(/(?:\\d{10}|\\d{9}X|B00[\\dA-Z]{7}))(?:[/?]|%3F)'
             ),
             replaceLink: function forAmazon(link, url) {
                 var frag = this.urlRE.exec(url);
@@ -244,7 +245,8 @@ confirmed:
                         node.classList.contains('replies') ||
                         node.classList.contains('permalink') ||
                         node.classList.contains('AppContainer') ||
-                        node.id === 'timeline'
+                        node.id === 'timeline' ||
+                        nodeData.componentTerm === 'tweet'
                 )
             ) || (
                 target.classList.contains('expanded-conversation') &&
