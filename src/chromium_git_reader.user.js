@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name           Chromium Git Reader
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    record hash and load next page and filter any commit message on Chromium Git.
 // @include        https://chromium.googlesource.com/chromium/chromium/*
+// @include        https://chromium.googlesource.com/chromium/src/*
 // @run-at         document-end
 // ==/UserScript==
 
@@ -11,7 +12,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 31.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80 */
@@ -68,7 +69,8 @@ confirmed:
     }
 
     re = new RegExp(
-        '^https://chromium\\.googlesource\\.com/chromium/chromium/\\+log/HEAD/$'
+        '^https://chromium\\.googlesource\\.com/chromium/' +
+            '(?:chromium|src)/\\+log/HEAD/$'
     );
 
     if (!re.test(location.href)) {
@@ -103,6 +105,7 @@ confirmed:
         'sandbox_linux_unittests',
         'linux[- _]aura(?: clang)?',
         'linux_ash',
+        'aura-linux',
         'Breakpad Linux',
         'Linux (?:NaCl|Zygote|Breakpad)',
         'x11(?:/test)?',
@@ -110,7 +113,7 @@ confirmed:
         '(?:(?:linux(?:_aura)?)[\\- _/])?(?:cros|chrome ?os)' +
             '(?:[\\- _/](?:EULA|dbus|library|asan|interface))?',
         '(?:(?:DMP|Telemetry) / |ASan/)?Android' +
-            '(?: (?:buildbot|bb|WebView(?: build)?|Video|' +
+            '(?: (?:buildbot|bb|WebView(?: build)?|Video|media|' +
             'perf(?: tests?)?(?: runner)?|envsetup|memreport|Chromoting|' +
             '/ (?:Telemetry|DMP|dmprof|memreport))|Perf|/clang)?',
         'android_webview',
@@ -118,12 +121,13 @@ confirmed:
         'FindBugs',
         'drive',
         'Drive API',
-        'Files\\.app',
+        'File?s\\.app',
         'file_manager',
         'file_handler_util',
         'File manager drive API',
-        'Gallery\\.app',
-        'AudioPlayer',
+        'Gallery(?:\\.app)?',
+        'Audio ?Player',
+        'Video ?Player',
         'kiosk',
         'cryptohome',
         'shill \\(chromeos\\)',
@@ -199,7 +203,9 @@ confirmed:
         'device/bluetooth',
         'Bluetooth(?: Device)?',
         'unit_tests',
-        'LeakSanitizer'
+        'veatest',
+        'LeakSanitizer',
+        'Fixes for re-enabling more MSVC level 4 warnings'
     ].join('|');
     category = [
         'CC',
@@ -255,7 +261,8 @@ confirmed:
             'addressinput|va|yuv|expat)(?: headers?)?',
         '(?:third_party/)?' +
             '(?:android_tools|openssl|libmtp|accessibility-developer-tools|' +
-            'protobuf|webpagereplay|freetype|webgl(?:/src)?)',
+            'protobuf|webpagereplay|freetype|webgl(?:/src)?|libva|' +
+            'cros_system_api)',
         '(?:tools/)?(?:gyp|grit|swarm(?:ing)?_client)(?:/)?',
         '(?:OpenSSL|[ln]ss)(?:_revision)?',
         'trunk VERSION',
@@ -287,6 +294,7 @@ confirmed:
         'WebGL conformance tests',
         'deps2git',
         'asan_symbolize.py',
+        'ASan/Win',
         'openmax(?:[_ ]dl)?',
         'OTS',
         'Web[- ]Page[- ]Replay',
@@ -338,10 +346,13 @@ confirmed:
         'pdfium',
         'buildtools',
         'font-compression-reference',
-        'Dr\\. Memory'
+        'Dr\\. Memory',
+        'dom_distiller_js',
+        'usrsctplib',
+        'Android SDK'
     ].join('|');
     fix = [
-        '(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|' +
+        '(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|GYP|MIPS|' +
             'Chrome(?: for Android| ?OS)?|Linux/Gtk|(?:64 bit )?Mac|' +
             '(?:the )?G?TV|non-aura|win(?:64)?|(?:Windows|mac) GN|clang) )?' +
             'build(?: (?:error|issue))?(?: (?:after|for) |\\.$)?',
@@ -368,7 +379,8 @@ confirmed:
         'Android compile',
         '(?:another )?missing #include build error from ',
         '"unreachable code" warnings \\(MSVC warning 4702\\) in ',
-        'memory leak in '
+        'memory leak in ',
+        'line endings(?:\\.)?$'
     ].join('|');
     remove = [
         'empty directory(?:\\.)?$',
@@ -382,6 +394,7 @@ confirmed:
             'unit tests?|field|files?|strings?|function|actions?|resources?|' +
             'var(?:iable)?|includes?)(?:\\.)?$',
         'unnecessary code for ',
+        'unnecessary code\\.$',
         'unnecessary condition\\.',
         'unnecessary macro\\.$',
         'unneeded includes?(?:\\.)?$',
@@ -391,7 +404,7 @@ confirmed:
     ].join('|');
     misc = [
         'Reland',
-        '(?:(?:Manual|Partial|Experimental|Tentatively) )?Revert?',
+        '(?:(?:Manual|Partial|Experimental|Tentatively) )?Revert(?:ing)?',
         'Use a direct include of ' +
             '(?:strings|time|the (?:message_loop|shared_memory)) ' +
             'headers? in',
@@ -459,7 +472,10 @@ confirmed:
         '^Disable a flaky test\\.$',
         '^Style nits$',
         '^Compile fix for Clang$',
-        '^net: a batch of HSTS preloaded updates\\.$'/*,
+        '^net: a batch of HSTS preloaded updates\\.$',
+        '^Land Recent (?:QUIC|SPDY) Changes(?:\\.)?',
+        '^(?:Update|Upload)(?: files in)? .*? ' +
+            'to use results\\.AddValue(?:\\((?:\\.\\.\\.)?\\)(?:\\.)?)?$'/*,
         '\b(?:Files\\.app|UMA|histogram|DCHECK)\b'*/
     ].join('|'), 'i');
 
