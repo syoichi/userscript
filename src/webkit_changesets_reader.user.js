@@ -122,7 +122,7 @@ confirmed:
     }
 
     prefix = '^(?:<​https?://webkit\\.org/b/\\d+> )?' +
-        '(?:Source/WebCore: )?(?:.: )?(?:Unreviewed[.,]? )?(?:';
+        '(?:Source/WebCore: )?(?:.: )?(?:Unreviewed[.,;]? )?(?:';
 
     colons = [
         'CURL',
@@ -148,12 +148,14 @@ confirmed:
         'bmalloc',
         'WK2 iOS',
         'WebKit2/iOS',
-        'REGRESSION \\(iOS WebKit2\\)'/*,
+        'REGRESSION ?\\((?:WK2 )?iOS(?: WebKit2)?\\)',
+        'iOS WebKit2',
+        'Revert'/*,
         'WK[12]?'*/
     ].join('|');
     category = [
         // '(?:WK|WebKit)[12]?',
-        'iOS(?: (?:(?:WK|WebKit)[12]?|WebGL))?',
+        'iOS(?: (?:(?:WK|WebKit)[12]?|WebGL|Media))?',
         // 'Mac',
         'Cocoa',
         // 'Qt',
@@ -184,7 +186,7 @@ confirmed:
         'ASAN',
         'GLIB',
         'GDB',
-        'ARM64',
+        'ARM(?:64|v7)',
         'ftlopt'
     ].join('|');
     fix = [
@@ -244,19 +246,20 @@ confirmed:
         'Update test expectations after',
         'Update the build fix for',
         'ARM64 buildfix after',
-        'Bump version to'
+        'Bump version to',
+        'REGRESSION\\(r\\d+\\):? \\[GTK\\]'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
         '(?:(?:' + colons + ') ?:|' + misc + ') ',
         '(?:\\[(?:' + category + ')\\]| )+:?',
         '(?:(?:(?:One )?(?:more )?|Maybe the last )?' +
-            '(?:(?:Attempt(?:ed)?|Try)(?: to)?' +
+            '(?:(?:Attempt(?:ed)?|Tr(?:y|ied))(?: to)?' +
             '|Build|Compile|Clumsily|Another) )?' +
             'Fix(?:e[ds]|ing)?(?: for)?(?: the)? ' +
             '(?:' + fix + ')(?: (?:for|(?:builds? )?after)|builds?\\.)?',
         '(?:(?:extended )?(?:(?:Yet )?Another|Attempt(?:ed)?(?: at)?) )?' +
-            '(?:Speculative )?(?:the )?(?:' + fix + ')' +
+            '(?:(?:Speculative|Additional) )?(?:the )?(?:' + fix + ')' +
             '(?: (?:minimum|Speculative))? (?:builds? ?)?Fix(?:e[ds])?' +
             '(?: (?:following|(?:attempt )?after)|\\.)?',
         '(?:New|Remove|Delete) (?:Tag|Branch)(?:\\.)?$',

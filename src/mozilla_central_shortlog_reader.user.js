@@ -93,7 +93,7 @@ confirmed:
         '(?:\\()?(?:Part|Patch)[ .]?[\\da-z]+(?:/\\d+)?(?:\\))?|' +
         '(?:\\[)?\\d+/\\d+(?:\\])?' +
         ')' +
-        '(?: ?:| -)? ' +
+        '(?: ?[\\-:,])? ' +
         ')?' +
         '(?:';
 
@@ -153,10 +153,13 @@ confirmed:
         'mozrunner',
         'mozcrash',
         'mozversion',
+        'mozlog',
+        'mozdevice',
         'Camera',
         'Roku',
         'dolphin',
-        'TPS'
+        'TPS',
+        'MTP'
     ].join('|');
     update = [
         '(?:(?:bundled|in-tree) )?' +
@@ -185,7 +188,9 @@ confirmed:
         'sccache',
         'marionette(?:-transport)?',
         'OTS',
-        'PSL'
+        'PSL',
+        'Hunspell',
+        'tern'
     ].join('|');
     merge = [
         '(?:(?:latest|last) )?(?:PGO-)?green',
@@ -218,7 +223,8 @@ confirmed:
         'Attempted',
         'bug \\d+[.,]',
         'GCC warnings? about',
-        'backout of bugs'
+        'backout of bugs',
+        'dangerous public destructors'
     ].join('|');
     misc = [
         'Revert',
@@ -253,7 +259,19 @@ confirmed:
         'Add (?:inner|outer) window assertions to',
         '(?:Replace|Remove) AutoPushJSContext in',
         'Update Mozilla to use NSS',
-        'Add non-minified version of'
+        'Add non-minified version of',
+        'Touch CLOBBER for',
+        'Fix or whitelist dangerous public destructors in',
+        'Remove irrelevant & problematic extensions from',
+        'Convert XPathExpression to WebIDL bindings,',
+        'Return value rooting for',
+        'Remove code for handling Thebes backed gfxContext ' +
+            '(?:in|from various files under)',
+        'Remove some unused code\\.',
+        'Use an nsRefPtr for',
+        'remove API 8 code from',
+        'eliminat(?:e|ing) enclosing instance member access (?:in|of)',
+        'Flatten intl/.*? director(?:y|ies)\\.'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
@@ -283,7 +301,8 @@ confirmed:
         'Remove unused variables[., ]?',
         'Remove unnecessary whitespace[., ]?',
         'Intermittent browser_',
-        'Double the test timeout$'
+        'Double the test timeout$'/*,
+        'Disable test_'*/
     ].join('|') + ')', 'i');
 
     each.call(commits, hideCommit);

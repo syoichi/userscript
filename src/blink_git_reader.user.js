@@ -133,6 +133,7 @@ confirmed:
         'tasak@google.com',
         'tyoshino@chromium.org',
         'toyoshim@chromium.org',
+        'yutak@chromium.org',
         'pfeldman@chromium.org',
         'vsevik@chromium.org',
         'yurys@chromium.org',
@@ -159,6 +160,7 @@ confirmed:
         'senorblanco@chromium.org',
         'eae@chromium.org',
         'cbiesinger@chromium.org',
+        'mikhail.pozdnyakov@intel.com',
         'tonyg@chromium.org',
         'tony@chromium.org',
         'ksakamoto@chromium.org',
@@ -178,6 +180,7 @@ confirmed:
         'hclam@chromium.org',
         'mvanouwerkerk@chromium.org',
         'jsbell@chromium.org',
+        'dmazzoni@chromium.org',
         'pkasting@chromium.org',
         'kbr@chromium.org',
         'kochi@chromium.org',
@@ -254,6 +257,11 @@ confirmed:
         'sergeyv@chromium.org',
         'estade@chromium.org',
         'pmeenan@chromium.org',
+        'feng@chromium.org',
+        'weiliangc@chromium.org',
+        'mkosiba@chromium.org',
+        'pmarch@chromium.org',
+        'changwan@chromium.org',
         'urvang@google.com',
         'antonm@google.com',
         'vrk@google.com',
@@ -304,19 +312,23 @@ confirmed:
         'PartitionAlloc',
         'perf test',
         'TestFix',
-        'LeakExpectations'
+        'LeakExpectations',
+        'Fixes for re-enabling more MSVC level 4 warnings'
     ].join('|');
     category = [
         'MIPS',
         'Sheriff',
         'Gardening',
         'Refactor(?:ing)?',
-        'GOM'
+        'GOM',
+        'Android',
+        'Linux'
     ].join('|');
     fix = [
         '(?:Windows Debug|the Windows component|Mac|Android|oilpan)' +
             '(?: build)?(?: failure)?(?: broken by)?',
-        '(?:clobbered )?build(?: (?:warning|issue|breakage caused by))?',
+        '(?:(?:clobbered|the) )?' +
+            'build(?: (?:warning|issue|breakage caused by))?',
         '(?:build|ASSERTs?) on',
         '(?:python|webkitpy) tests',
         'crashes',
@@ -345,7 +357,7 @@ confirmed:
         'carriage returns from LayoutTests'
     ].join('|');
     misc = [
-        '(?:Add(?:ed|ing)?|Remove|Skip|Layout) ' +
+        '(?:Add(?:ed|ing|s)?|Remove|Skip|Layout) ' +
             '(?:(?:a|super-flaky) )?(?:(?:layout|perf(?:ormance)?) )?' +
             '(?:unit)?test(?:s|ing)?(?: for)?',
         '(?:also )?Adding an expected failure for .*? on',
