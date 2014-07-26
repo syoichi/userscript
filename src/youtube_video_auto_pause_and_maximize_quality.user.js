@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           YouTube Video Auto Pause and Maximize Quality
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.2
+// @version        0.0.3
 // @description    automatically pause and maximize quality in YouTube Video.
 // @include        http://www.youtube.com/watch?*
 // @include        https://www.youtube.com/watch?*
@@ -12,8 +12,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 18.0.1(Scriptish 0.1.8)
-        Google Chrome 24.0.1312.52
+        Mozilla Firefox 30.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80 */
@@ -23,93 +22,20 @@ confirmed:
 (function executeAutoPauseAndMaximizeQuality(doc) {
     'use strict';
 
-    var hasHTML5Player, hasTime, handleFlashPlayer;
+    if (!doc.querySelector('.player-unavailable.hid')) {
+        return;
+    }
 
-    // via https://gist.github.com/3366491
-    function nodeObserver(callback, options) {
-        var MO, hasOnly, each, nodesType;
+    function executeYouTubeEventListener(win, doc) {
+        var video, moviePlayer, intervalID, isMuted,
+            disabledPlaying = false,
+            disabledPaused = false,
+            disabledDispatchPlaybackQualityChange = false;
 
-        MO = window.MutationObserver || window.WebKitMutationObserver;
-        hasOnly = options.addOnly || options.removeOnly;
-        each = Array.prototype.forEach;
-        nodesType = (options.addOnly ? 'add' : 'remov') + 'edNodes';
-        options.callback = callback;
-
-        function eachNodes(mutation) {
-            function callWithInfo(node) {
-                callback({node: node, mutation: mutation, options: options});
-            }
-
-            if (mutation.type === 'childList' && hasOnly) {
-                each.call(mutation[nodesType], callWithInfo);
-            } else {
-                callWithInfo(null);
-            }
+        function hasTime() {
+            return /^#t=(?:\d+h)?(?:\d+m)?(?:\d+s)?$/.test(location.hash);
         }
-
-        (options.observer = new MO(function eachMutations(mutations) {
-            mutations.forEach(eachNodes);
-        })).observe(options.target, options);
-        return options;
-    }
-
-    if (!doc.querySelector('#video-player, embed')) {
-        return;
-    }
-
-    hasHTML5Player = !doc.getElementById('movie_player');
-    hasTime = function hasTime() {
-        return (/^#t=(?:\d+h)?(?:\d+m)?(?:\d+s)?$/).test(location.hash);
-    };
-
-    if (hasHTML5Player) {
-        doc.addEventListener('play', function handleHTML5Player(evt) {
-            var moviePlayer;
-
-            doc.removeEventListener('play', handleHTML5Player, true);
-
-            nodeObserver(function maximizeQualityHTML5Player(info) {
-                var maxQuality, options;
-
-                maxQuality = doc.querySelector(
-                    '.html5-settings-popup-menu [style*="list-item"]'
-                );
-                options = info.options;
-
-                if (
-                    maxQuality && !maxQuality.classList.contains('active') &&
-                        !options.target.classList.contains('hid')
-                ) {
-                    maxQuality.click();
-                    doc.body.click();
-                }
-
-                options.observer.disconnect();
-            }, {
-                target: doc.querySelector('.html5-quality-button'),
-                attributes: true,
-                attributeFilter: ['style']
-            });
-
-            moviePlayer = evt.target;
-
-            moviePlayer.pause();
-
-            if (0 < moviePlayer.currentTime && !hasTime()) {
-                moviePlayer.currentTime = 0;
-            }
-        }, true);
-        return;
-    }
-
-    handleFlashPlayer = function handleFlashPlayer(win, doc, hasTime) {
-        var moviePlayer, intervalID, isMuted;
-
-        function seekAndUnMuteFlashPlayer() {
-            doc.removeEventListener(
-                'YouTubePlaybackQualityChange',
-                seekAndUnMuteFlashPlayer
-            );
+        function seekAndUnMute() {
             if (!hasTime()) {
                 moviePlayer.seekTo(0);
             }
@@ -117,81 +43,48 @@ confirmed:
                 moviePlayer.unMute();
             }
         }
-        function pauseAndMaximizeQualityFlashPlayer(evt) {
-            var playerState, maxQualityLevel;
+        function executeStateChange(playerState) {
+            var maxQualityLevel;
 
-            playerState = evt.detail.playerState;
+            if (disabledPlaying && disabledPaused) {
+                return;
+            }
 
             if (playerState === 1) {
+                disabledPlaying = true;
+
                 moviePlayer.pauseVideo();
             } else if (playerState === 2) {
-                doc.removeEventListener(
-                    'YouTubeStateChange',
-                    pauseAndMaximizeQualityFlashPlayer
-                );
+                disabledPaused = true;
+
                 maxQualityLevel = moviePlayer.getAvailableQualityLevels()[0];
 
                 if (moviePlayer.getPlaybackQuality() === maxQualityLevel) {
-                    seekAndUnMuteFlashPlayer();
+                    seekAndUnMute();
                 } else {
                     moviePlayer.setPlaybackQuality(maxQualityLevel);
                 }
             }
         }
-        function listenYouTubeEvent(win, doc) {
-            var moviePlayer = doc.getElementById('movie_player'),
-                eventInitDict = {bubbles: true, cancelable: true},
-                disabledPlaying = false,
-                disabledPaused = false,
-                disabledDispatchPlaybackQualityChange = false;
-
-            function dispatchStateChange(playerState) {
-                if (disabledPlaying && disabledPaused) {
-                    return;
-                }
-
-                if (playerState === 1) {
-                    disabledPlaying = true;
-                } else if (playerState === 2) {
-                    disabledPaused = true;
-                }
-
-                eventInitDict.detail = {playerState: playerState};
-
-                moviePlayer.dispatchEvent(new win.CustomEvent(
-                    'YouTubeStateChange',
-                    eventInitDict
-                ));
-            }
-            function dispatchPlaybackQualityChange() {
-                if (disabledDispatchPlaybackQualityChange) {
-                    return;
-                }
-
-                disabledDispatchPlaybackQualityChange = true;
-
-                delete eventInitDict.detail;
-
-                moviePlayer.dispatchEvent(new win.CustomEvent(
-                    'YouTubePlaybackQualityChange',
-                    eventInitDict
-                ));
+        function executePlaybackQualityChange() {
+            if (disabledDispatchPlaybackQualityChange) {
+                return;
             }
 
-            win.dispatchStateChange = dispatchStateChange;
-            win.dispatchPlaybackQualityChange = dispatchPlaybackQualityChange;
+            disabledDispatchPlaybackQualityChange = true;
 
-            moviePlayer.addEventListener(
-                'onStateChange',
-                dispatchStateChange.name
-            );
-            moviePlayer.addEventListener(
-                'onPlaybackQualityChange',
-                dispatchPlaybackQualityChange.name
-            );
+            seekAndUnMute();
         }
 
-        intervalID = win.setInterval(function muteFlashPlayer() {
+        video = doc.querySelector('video');
+
+        // for HTML5 Player
+        if (video && hasTime()) {
+            video.pause();
+        }
+
+        // for Flash Player
+        intervalID = win.setInterval(function mute() {
             moviePlayer = doc.getElementById('movie_player');
 
             if (!moviePlayer.isMuted) {
@@ -200,25 +93,31 @@ confirmed:
 
             win.clearInterval(intervalID);
 
+            /*
+            if (hasTime()) {
+                moviePlayer.pauseVideo();
+            }*/
+
             isMuted = moviePlayer.isMuted();
 
             if (!isMuted) {
                 moviePlayer.mute();
             }
 
-            doc.addEventListener(
-                'YouTubeStateChange',
-                pauseAndMaximizeQualityFlashPlayer
+            win.executeStateChange = executeStateChange;
+            win.executePlaybackQualityChange = executePlaybackQualityChange;
+
+            moviePlayer.addEventListener(
+                'onStateChange',
+                executeStateChange.name
             );
-            doc.addEventListener(
-                'YouTubePlaybackQualityChange',
-                seekAndUnMuteFlashPlayer
+            moviePlayer.addEventListener(
+                'onPlaybackQualityChange',
+                executePlaybackQualityChange.name
             );
-            doc.head.appendChild(doc.createElement('script')).textContent =
-                '(' + listenYouTubeEvent + '(window, document));';
         }, 0);
-    };
+    }
 
     doc.head.appendChild(doc.createElement('script')).textContent =
-        '(' + handleFlashPlayer + '(window, document, ' + hasTime + '));';
+        '(' + executeYouTubeEventListener + '(window, document));';
 }(document));
