@@ -1,10 +1,9 @@
 // ==UserScript==
 // @name           Blink Git2SVN Redirector
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    redirect from chromium.googlesource.com to src.chromium.org about Blink.
-// @include        https://chromium.googlesource.com/chromium/blink/+/*
-// @exclude        https://chromium.googlesource.com/chromium/blink/+/master
+// @include        https://chromium.googlesource.com/chromium/blink/*
 // @run-at         document-end
 // ==/UserScript==
 
@@ -12,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 27.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 31.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80 */
