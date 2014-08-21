@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           GitHub Dashboard Reader
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.2
+// @version        0.0.3
 // @description    record alert's datetime and load next page on GitHub Dashboard.
 // @include        https://github.com/
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 31.0(Scriptish 0.1.12)
 */
 
 /* jshint maxlen: 80 */
@@ -99,12 +99,6 @@ confirmed:
         return;
     }
 
-    buttons = news.getElementsByClassName('js-events-pagination');
-
-    if (!buttons.length) {
-        return;
-    }
-
     doc.head.appendChild(doc.createElement('style')).textContent = [
         '.marking {',
         '  background-color: red !important;',
@@ -155,6 +149,12 @@ confirmed:
     githubDatetime = localStorage.githubDatetime;
 
     if (!githubDatetime || toggleMarking()) {
+        return;
+    }
+
+    buttons = news.getElementsByClassName('js-events-pagination');
+
+    if (!buttons.length) {
         return;
     }
 
