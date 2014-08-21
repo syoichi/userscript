@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.10
+// @version        0.0.11
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -16,10 +16,10 @@ confirmed:
 
 /* jshint maxlen: 80 */
 
-(function executeReplaceLink(forEach, doc, lc) {
+(function executeReplaceLink(forEach, doc) {
     'use strict';
 
-    var pageContainer, sites, eachLinks;
+    var pageContainer, sites;
 
     pageContainer = doc.getElementById('page-container');
 
@@ -52,6 +52,13 @@ confirmed:
         options.observer = observer;
         options.callback = callback;
         return options;
+    }
+
+    function eachLinks(node) {
+        forEach.call(
+            node.querySelectorAll('.twitter-timeline-link, .link, .media'),
+            replacer
+        );
     }
 
     function replacer(link) {
@@ -179,53 +186,26 @@ confirmed:
                 link.href = frag[1] + 'dp' + frag[2];
             }
         },
-        'flic.kr': {
-            urlRE: /^http:\/\/flic\.kr\/p\/[\da-zA-Z]+$/,
+        'www.flickr.com': {
+            urlRE: /^https?:\/\/www\.flickr\.com\/photos\/.+\/\d+(?:\/)?$/,
             replaceLink: function forFlickr(link, url) {
-                var linkData;
-
-                function replaceLinkURL() {
-                    var urlObj = new URL(linkData.ultimateUrl);
-
-                    urlObj.pathname = urlObj.pathname.replace(
-                        /\/?$/,
-                        '/sizes/o'
-                    );
-
-                    link.href = urlObj.toString();
-                }
-
-                if (
-                    !this.urlRE.test(url) ||
-                        /^\/\w+\/statu(?:se)?s\/\d+$/.test(lc.pathname)
-                ) {
+                if (!this.urlRE.test(url)) {
                     return true;
                 }
 
-                linkData = link.dataset;
-
-                if (linkData.ultimateUrl) {
-                    replaceLinkURL();
-                } else {
-                    nodeObserver(function checkAttrName(info) {
-                        info.options.observer.disconnect();
-
-                        replaceLinkURL();
-                    }, {
-                        target: link,
-                        attributes: true,
-                        attributeFilter: ['data-ultimate-url']
-                    });
+                link.href = url.replace(/(?:\/)?$/, '/sizes/o');
+            }
+        },
+        'flic.kr': {
+            urlRE: /^https?:\/\/flic\.kr\/p\/[\da-zA-Z]+$/,
+            replaceLink: function forFlickr(link, url) {
+                if (!this.urlRE.test(url)) {
+                    return true;
                 }
+
+                link.href = url + '/sizes/o';
             }
         }
-    };
-
-    eachLinks = function eachLinks(node) {
-        forEach.call(
-            node.querySelectorAll('.twitter-timeline-link, .link, .media'),
-            replacer
-        );
     };
 
     eachLinks(pageContainer);
@@ -266,12 +246,4 @@ confirmed:
         childList: true,
         subtree: true
     });
-    nodeObserver(function retryReplace(info) {
-        replacer(info.mutation.target);
-    }, {
-        target: pageContainer,
-        attributes: true,
-        attributeFilter: ['data-ultimate-url'],
-        subtree: true
-    });
-}(Array.prototype.forEach, document, location));
+}(Array.prototype.forEach, document));
