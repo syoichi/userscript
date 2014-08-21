@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.9
+// @version        0.0.10
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -19,7 +19,7 @@ confirmed:
 (function executeReplaceLink(forEach, doc, lc) {
     'use strict';
 
-    var pageContainer, sites, replacer, eachLinks;
+    var pageContainer, sites, eachLinks;
 
     pageContainer = doc.getElementById('page-container');
 
@@ -54,6 +54,32 @@ confirmed:
         return options;
     }
 
+    function replacer(link) {
+        var linkData, url, img, site;
+
+        linkData = link.dataset;
+        url = linkData.ultimateUrl || linkData.expandedUrl ||
+            linkData.resolvedUrlLarge || linkData.url || link.title;
+
+        if (!url) {
+            if (link.childElementCount !== 1 || link.target) {
+                return;
+            }
+
+            img = link.querySelector('img');
+
+            if (img) {
+                url = img.src;
+            }
+        }
+
+        site = sites[(new URL(url)).hostname];
+
+        if (!site || site.replaceLink(link, url)) {
+            link.href = url;
+        }
+    }
+
     if (!pageContainer) {
         return;
     }
@@ -77,11 +103,29 @@ confirmed:
                     '(?::large)?$'
             ),
             replaceLink: function forPbsTwimg(link, url) {
+                var img, range, anchor;
+
                 if (!this.urlRE.test(url)) {
                     return true;
                 }
 
-                link.href = url.replace(/(?::large)?$/, ':orig');
+                if (link.tagName === 'A') {
+                    link.href = url.replace(/(?::large)?$/, ':orig');
+                } else {
+                    img = link.querySelector('img:only-child');
+
+                    if (!img) {
+                        return false;
+                    }
+
+                    range = doc.createRange();
+                    anchor = doc.createElement('a');
+
+                    anchor.href = url.replace(/(?::large)?$/, ':orig');
+
+                    range.selectNode(img);
+                    range.surroundContents(anchor);
+                }
             }
         },
         'twitpic.com': {
@@ -138,7 +182,18 @@ confirmed:
         'flic.kr': {
             urlRE: /^http:\/\/flic\.kr\/p\/[\da-zA-Z]+$/,
             replaceLink: function forFlickr(link, url) {
-                var urlParser, linkData, replaceLinkURL;
+                var linkData;
+
+                function replaceLinkURL() {
+                    var urlObj = new URL(linkData.ultimateUrl);
+
+                    urlObj.pathname = urlObj.pathname.replace(
+                        /\/?$/,
+                        '/sizes/o'
+                    );
+
+                    link.href = urlObj.toString();
+                }
 
                 if (
                     !this.urlRE.test(url) ||
@@ -147,20 +202,7 @@ confirmed:
                     return true;
                 }
 
-                urlParser = doc.createElement('a');
                 linkData = link.dataset;
-                replaceLinkURL = function replaceLinkURL() {
-                    urlParser.href = linkData.ultimateUrl;
-
-                    link.href = [
-                        urlParser.protocol,
-                        '//',
-                        urlParser.host,
-                        urlParser.pathname.replace(/\/?$/, '/sizes/o'),
-                        urlParser.search,
-                        urlParser.hash
-                    ].join('');
-                };
 
                 if (linkData.ultimateUrl) {
                     replaceLinkURL();
@@ -179,47 +221,6 @@ confirmed:
         }
     };
 
-    replacer = (function executeReturnFunc() {
-        var urlParser;
-
-        urlParser = doc.createElement('a');
-
-        return function replacer(link) {
-            var linkData, url, img, site;
-
-            linkData = link.dataset;
-            url = linkData.ultimateUrl || linkData.expandedUrl ||
-                linkData.resolvedUrlLarge || linkData.url || link.title;
-
-            if (!url) {
-                if (link.childElementCount !== 1 || link.target) {
-                    return;
-                }
-
-                img = link.querySelector('img');
-
-                if (img) {
-                    url = img.src;
-                }
-            }
-
-            urlParser.href = url;
-
-            site = sites[urlParser.hostname];
-            url = [
-                urlParser.protocol,
-                '//',
-                urlParser.host,
-                urlParser.pathname,
-                urlParser.search,
-                urlParser.hash
-            ].join('');
-
-            if (!site || site.replaceLink(link, url)) {
-                link.href = url;
-            }
-        };
-    }());
     eachLinks = function eachLinks(node) {
         forEach.call(
             node.querySelectorAll('.twitter-timeline-link, .link, .media'),
