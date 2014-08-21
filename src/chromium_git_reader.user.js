@@ -225,7 +225,7 @@ confirmed:
         '(?:(?:Chromoting|Mirror) )?android[ _]?' +
             '(?:webview|webivew|Buildbot|Chromoting|nNTP|Java Bridge)?',
         'oobe',
-        'MIPS',
+        'MIPS(?:64)?',
         'Chromoting',
         'Remoting',
         'chromed?river',
@@ -349,12 +349,14 @@ confirmed:
         'Dr\\. Memory',
         'dom_distiller_js',
         'usrsctplib',
-        'Android SDK'
+        'Android SDK',
+        'BoringSSL'
     ].join('|');
     fix = [
-        '(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|GYP|MIPS|' +
+        '(?:the )?(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|' +
+            'GYP|MIPS|ozone|' +
             'Chrome(?: for Android| ?OS)?|Linux/Gtk|(?:64 bit )?Mac|' +
-            '(?:the )?G?TV|non-aura|win(?:64)?|(?:Windows|mac) GN|clang) )?' +
+            'G?TV|non-aura|win(?:64)?|(?:Windows|mac) GN|clang) )?' +
             'build(?: (?:error|issue))?(?: (?:after|for) |\\.$)?',
         'checkdeps$',
         '(?:a )?typos?(?:\\.)?$',
@@ -439,6 +441,7 @@ confirmed:
             '(?:' + roll + ')(?: (?:expectations|suppressions))?' +
             '(?: (?:from|after|version))?(?: DEPS)?(?: (?:for|to))?',
         '^(?:' + roll + ') (?:DEPS )?roll(?: to)?(?:\\.)?',
+        '^Use (?:' + roll + ') revision \\d+\\.$',
         '^(?:Attempt to )?Fix(?:e[ds]|ing)? (?:' + fix + ')',
         '^(?:Remov|Delet)(?:e[ds]?|ing) (?:' + remove + ')',
         '^White ?space (?:CL|commit|change|fixes|change to ' +

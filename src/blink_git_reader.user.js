@@ -142,6 +142,7 @@ confirmed:
         'loislo@chromium.org',
         'caseq@chromium.org',
         'eustas@chromium.org',
+        'kaznacheev@chromium.org',
         'alph@chromium.org',
         'prybin@chromium.org',
         'serya@chromium.org',
@@ -191,8 +192,11 @@ confirmed:
         'dmazzoni@google.com',
         'yosin@chromium.org',
         'bashi@chromium.org',
+        'horo@chromium.org',
+        'jbroman@chromium.org',
         'stavila@adobe.com',
         'jww@chromium.org',
+        'scheib@chromium.org',
         'gavinp@chromium.org',
         'iannucci@google.com',
         'sadrul@chromium.org',
@@ -203,6 +207,7 @@ confirmed:
         'tdanderson@chromium.org',
         'leviw@chromium.org',
         'zmo@chromium.org',
+        'jkarlin@chromium.org',
         'jianli@chromium.org',
         'fsamuel@chromium.org',
         'rjkroege@chromium.org',
@@ -227,6 +232,7 @@ confirmed:
         'simonhatch@chromium.org',
         'skobes@chromium.org',
         'ericwilligers@chromium.org',
+        'zerny@chromium.org',
         'johnme@chromium.org',
         'jam@chromium.org',
         'chrishtr@chromium.org',
@@ -262,6 +268,8 @@ confirmed:
         'mkosiba@chromium.org',
         'pmarch@chromium.org',
         'changwan@chromium.org',
+        'igsolla@chromium.org',
+        'fdegans@chromium.org',
         'urvang@google.com',
         'antonm@google.com',
         'vrk@google.com',
@@ -313,7 +321,8 @@ confirmed:
         'perf test',
         'TestFix',
         'LeakExpectations',
-        'Fixes for re-enabling more MSVC level 4 warnings'
+        'Fixes for re-enabling more MSVC level 4 warnings',
+        'Use tighter typing in editing'
     ].join('|');
     category = [
         'MIPS',
@@ -374,7 +383,8 @@ confirmed:
         'Make calls to AtomicString\\(const String&\\) explicit in',
         'Widen timeout (?:expectation|suppression)s? for',
         'Use new is\\*Element\\(\\) helper functions',
-        '(?:Oilpan:? )?Build fix (?:after|followup to)'
+        '(?:Oilpan:? )?Build fix (?:after|followup to)',
+        'DevTools: Remove orphaned CSS rules'
     ].join('|');
 
     filterRE = new RegExp([

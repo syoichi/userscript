@@ -156,6 +156,7 @@ confirmed:
     category = [
         // '(?:WK|WebKit)[12]?',
         'iOS(?: (?:(?:WK|WebKit)[12]?|WebGL|Media))?',
+        'WebKit2 iOS',
         // 'Mac',
         'Cocoa',
         // 'Qt',
@@ -186,7 +187,7 @@ confirmed:
         'ASAN',
         'GLIB',
         'GDB',
-        'ARM(?:64|v7)',
+        'ARM(?:64|v7)?',
         'ftlopt'
     ].join('|');
     fix = [

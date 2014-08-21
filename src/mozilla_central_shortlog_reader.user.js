@@ -155,6 +155,7 @@ confirmed:
         'mozversion',
         'mozlog',
         'mozdevice',
+        'mozprofile',
         'Camera',
         'Roku',
         'dolphin',
@@ -165,7 +166,7 @@ confirmed:
         '(?:(?:bundled|in-tree) )?' +
             'lib(?:png|cubeb|vorbis|opus|vpx|jpeg-turbo|nestegg|ffi)',
         '(?:pdf|vtt)\\.js',
-        'moz(?:device|version|log|test)',
+        'moz(?:device|version|log|test|process)',
         'NS(?:S|PR)',
         'psutil',
         'talos(?:\\.json)?',
@@ -190,7 +191,8 @@ confirmed:
         'OTS',
         'PSL',
         'Hunspell',
-        'tern'
+        'tern',
+        'OpenTok library'
     ].join('|');
     merge = [
         '(?:(?:latest|last) )?(?:PGO-)?green',
@@ -262,6 +264,7 @@ confirmed:
         'Add non-minified version of',
         'Touch CLOBBER for',
         'Fix or whitelist dangerous public destructors in',
+        'Fix (?:some|more) bad implicit constructors in',
         'Remove irrelevant & problematic extensions from',
         'Convert XPathExpression to WebIDL bindings,',
         'Return value rooting for',
@@ -271,13 +274,17 @@ confirmed:
         'Use an nsRefPtr for',
         'remove API 8 code from',
         'eliminat(?:e|ing) enclosing instance member access (?:in|of)',
-        'Flatten intl/.*? director(?:y|ies)\\.'
+        'Flatten intl/.*? director(?:y|ies)\\.',
+        'More gfx::Matrix cleanup in',
+        'Use \\|.+?\\| for Bluetooth sockets(?:,)?',
+        'Update Maybe users in'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
         '(?:(?:' + colons + ') ?(?::| -)|' + misc + ') ',
         '(?:(?:\\[|\\()(?:' + category + ')(?:\\]|\\))| )+:?',
-        '(?:Update|Upgrade|Uplift|Bump)(?: to)? (?:' + update + ')' +
+        '(?:Update|Upgrade|Uplift|Bump|Release)' +
+            '(?: (?:to|version of))? (?:' + update + ')' +
             '(?: source)?(?: to (?:version|Firefox[. ])?)?',
         'Merge (?:' + merge + ')(?: (?:(?:in)?to|and) )?',
         '(?:(?:follow[\\- ]?up)+,? (?:to )?)?' +
