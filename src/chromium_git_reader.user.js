@@ -122,7 +122,7 @@ confirmed:
         'drive',
         'Drive API',
         'File?s\\.app',
-        'file_manager',
+        'file[_ ]manager',
         'file_handler_util',
         'File manager drive API',
         'Gallery(?:\\.app)?',
@@ -402,7 +402,8 @@ confirmed:
         'unneeded includes?(?:\\.)?$',
         'test suppression\\.$',
         'a spurious space$',
-        'dead code(?:\\.)?$'
+        'dead code(?:\\.)?$',
+        'implicit conversions from scoped_refptr to T\\* in '
     ].join('|');
     misc = [
         'Reland',
@@ -478,7 +479,8 @@ confirmed:
         '^net: a batch of HSTS preloaded updates\\.$',
         '^Land Recent (?:QUIC|SPDY) Changes(?:\\.)?',
         '^(?:Update|Upload)(?: files in)? .*? ' +
-            'to use results\\.AddValue(?:\\((?:\\.\\.\\.)?\\)(?:\\.)?)?$'/*,
+            'to use results\\.AddValue(?:\\((?:\\.\\.\\.)?\\)(?:\\.)?)?$',
+        'for scoped_refptr(?:<T>)? operator T\\* removal(?:\\.)?$'/*,
         '\b(?:Files\\.app|UMA|histogram|DCHECK)\b'*/
     ].join('|'), 'i');
 

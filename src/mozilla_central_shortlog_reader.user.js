@@ -160,13 +160,15 @@ confirmed:
         'Roku',
         'dolphin',
         'TPS',
-        'MTP'
+        'MTP',
+        'MobileID',
+        'MobileMessage'
     ].join('|');
     update = [
         '(?:(?:bundled|in-tree) )?' +
             'lib(?:png|cubeb|vorbis|opus|vpx|jpeg-turbo|nestegg|ffi)',
         '(?:pdf|vtt)\\.js',
-        'moz(?:device|version|log|test|process)',
+        'moz(?:device|version|log|test|process|profile)',
         'NS(?:S|PR)',
         'psutil',
         'talos(?:\\.json)?',
@@ -277,7 +279,9 @@ confirmed:
         'Flatten intl/.*? director(?:y|ies)\\.',
         'More gfx::Matrix cleanup in',
         'Use \\|.+?\\| for Bluetooth sockets(?:,)?',
-        'Update Maybe users in'
+        'Update Maybe users in',
+        'Flatten .+? into parent directory\\.',
+        'Move .+? into dom/\\.'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
