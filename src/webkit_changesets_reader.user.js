@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WebKit Changesets Reader
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    change style and filter any commit message in WebKit Changesets.
 // @include        https://trac.webkit.org/timeline
 // @include        https://trac.webkit.org/timeline?*
@@ -12,7 +12,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 29.0.1(Scriptish 0.1.11)
+        Mozilla Firefox 32.0(Greasemonkey 2.2)
 */
 
 /* jshint maxlen: 80 */
@@ -49,7 +49,7 @@ confirmed:
         '  font-size: 1.3em !important;',
         '}',
         'dd.wiki, dt.wiki,',
-        'dd.changeset > :not(:first-child) {',
+        'dd.changeset > :not(:nth-child(2)) {',
         '  display: none !important;',
         '}',
         '.marking {',
@@ -114,7 +114,7 @@ confirmed:
     }
 
     commitMessages = timeline.querySelectorAll(
-        'dl dd.changeset > :first-child'
+        'dl dd.changeset > .changes:first-child + *'
     );
 
     if (!commitMessages.length) {
