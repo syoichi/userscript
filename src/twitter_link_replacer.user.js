@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.11
+// @version        0.0.12
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 31.0(Scriptish 0.1.12)
+        Mozilla Firefox 32.0(Greasemonkey 2.2)
 */
 
 /* jshint maxlen: 80 */
@@ -174,7 +174,7 @@ confirmed:
                 '^(https?://www.amazon.co.jp/)' +
                     '(?:(?:.+?|o|gp|exec/obidos)/)?' +
                     '(?:dp|ASIN|product|aw(?:/d)?)' +
-                    '(/(?:\\d{10}|\\d{9}X|B00[\\dA-Z]{7}))(?:[/?]|%3F)'
+                    '(/(?:\\d{10}|\\d{9}X|B00[\\dA-Z]{7}))(?:[/?]|%3F)?'
             ),
             replaceLink: function forAmazon(link, url) {
                 var frag = this.urlRE.exec(url);
