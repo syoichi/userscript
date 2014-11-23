@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           LDR Shortcut Key Customizer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.2
+// @version        0.0.3
 // @description    customize shortcut key in livedoor Reader.
 // @include        http://reader.livedoor.com/reader/
 // @run-at         document-end
@@ -12,7 +12,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 30.0(Scriptish 0.1.12)
+        Mozilla Firefox 33.1.1(Greasemonkey 2.3)
 */
 
 /* jshint maxlen: 80, camelcase: false */
@@ -28,39 +28,14 @@ confirmed:
     openInTab = typeof GM_openInTab === 'function' ? GM_openInTab : null;
 
     modifiers = {
-        'git.chromium.org Git - chromium.git/rss log': {
-            RE: new RegExp(
-                'svn://svn\\.chromium\\.org/chrome/trunk/src@(\\d+)'
-            ),
-            url: 'https://src.chromium.org/viewvc/chrome?view=rev&revision=',
-            getURL: function forChromium(hilight) {
-                var match = this.RE.exec(
-                    hilight.querySelector('pre').textContent
-                );
-
-                if (!match) {
-                    return null;
-                }
-
-                return this.url + match[1];
-            }
-        },
-        'Recent Commits to v8:master': {
-            RE: new RegExp(
-                'https://v8\\.googlecode\\.com/svn/branches/bleeding_edge@' +
-                    '(\\d+)'
-            ),
-            url: 'https://code.google.com/p/v8/source/detail?r=',
+        'Recent Commits to v8-git-mirror:master': {
+            url: 'https://chromium.googlesource.com/v8/v8/+/',
             getURL: function forV8(hilight) {
-                var match = this.RE.exec(
-                    hilight.querySelector('pre:last-child').textContent
-                );
+                var hash = hilight.querySelector(
+                    '.item_info > a:first-child'
+                ).href.split('/').slice(-1)[0];
 
-                if (!match) {
-                    return null;
-                }
-
-                return this.url + match[1];
+                return this.url + hash;
             }
         }
     };
@@ -111,7 +86,7 @@ confirmed:
         }
 
         if (!url) {
-            url = hilight.querySelector('.item_info > a').href;
+            url = hilight.querySelector('.item_info > a:first-child').href;
         }
 
         openInBackgroundTab(url);
