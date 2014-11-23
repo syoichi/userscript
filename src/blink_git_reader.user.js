@@ -14,8 +14,6 @@ confirmed:
         Mozilla Firefox 29.0.1(Scriptish 0.1.11)
 */
 
-/* jshint maxlen: 80 */
-
 (function executeBlinkGitReader(win, doc, each) {
     'use strict';
 

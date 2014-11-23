@@ -14,8 +14,6 @@ confirmed:
         Mozilla Firefox 32.0(Greasemonkey 2.2)
 */
 
-/* jshint maxlen: 80 */
-
 (function executeReplaceLink(forEach, doc) {
     'use strict';
 

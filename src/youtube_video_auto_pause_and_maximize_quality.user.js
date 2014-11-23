@@ -15,8 +15,6 @@ confirmed:
         Mozilla Firefox 30.0(Scriptish 0.1.12)
 */
 
-/* jshint maxlen: 80 */
-
 // ref. https://developers.google.com/youtube/js_api_reference
 
 (function executeAutoPauseAndMaximizeQuality(doc) {

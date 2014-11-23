@@ -14,7 +14,6 @@ confirmed:
         Mozilla Firefox 31.0(Scriptish 0.1.12)
 */
 
-/* jshint maxlen: 80 */
 /* global Range */
 
 (function executeGitHubDashboardReader(win, doc) {

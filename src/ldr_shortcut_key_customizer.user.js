@@ -15,8 +15,7 @@ confirmed:
         Mozilla Firefox 33.1.1(Greasemonkey 2.3)
 */
 
-/* jshint maxlen: 80, camelcase: false */
-/* global GM_openInTab, MouseEvent */
+/* global GM_openInTab */
 
 (function executeCustomizeKey(win, doc) {
     'use strict';
@@ -25,7 +24,9 @@ confirmed:
 
     KEY = 'h';
     KEY_CODE = KEY.toUpperCase().charCodeAt();
+    // jscs: disable requireCamelCaseOrUpperCaseIdentifiers
     openInTab = typeof GM_openInTab === 'function' ? GM_openInTab : null;
+    // jscs: enable requireCamelCaseOrUpperCaseIdentifiers
 
     modifiers = {
         'Recent Commits to v8-git-mirror:master': {

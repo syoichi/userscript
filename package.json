@@ -9,7 +9,8 @@
   "devDependencies": {
     "grunt": "",
     "grunt-cli": "",
-    "grunt-contrib-jshint": ""
+    "grunt-contrib-jshint": "",
+    "grunt-jscs": ""
   },
   "scripts": {
     "test": "grunt"

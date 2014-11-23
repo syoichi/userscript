@@ -17,8 +17,6 @@ confirmed:
         Google Chrome 28.0.1500.72
 */
 
-/* jshint maxlen: 80 */
-
 // inspired by http://let.hatelabo.jp/pacochi/let/gYC-xNPqhbauPQ
 //             https://gist.github.com/teramako/4554515
 
