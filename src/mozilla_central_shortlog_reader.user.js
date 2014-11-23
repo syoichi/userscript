@@ -156,13 +156,15 @@ confirmed:
         'mozlog',
         'mozdevice',
         'mozprofile',
+        'mozprocess',
         'Camera',
         'Roku',
         'dolphin',
         'TPS',
         'MTP',
         'MobileID',
-        'MobileMessage'
+        'MobileMessage',
+        'MobileConnection'
     ].join('|');
     update = [
         '(?:(?:bundled|in-tree) )?' +
@@ -194,7 +196,9 @@ confirmed:
         'PSL',
         'Hunspell',
         'tern',
-        'OpenTok library'
+        'OpenTok library',
+        'manifestparser',
+        'React'
     ].join('|');
     merge = [
         '(?:(?:latest|last) )?(?:PGO-)?green',
@@ -228,7 +232,8 @@ confirmed:
         'bug \\d+[.,]',
         'GCC warnings? about',
         'backout of bugs',
-        'dangerous public destructors'
+        'dangerous public destructors',
+        'some more bad implicit constructors in'
     ].join('|');
     misc = [
         'Revert',
@@ -281,7 +286,11 @@ confirmed:
         'Use \\|.+?\\| for Bluetooth sockets(?:,)?',
         'Update Maybe users in',
         'Flatten .+? into parent directory\\.',
-        'Move .+? into dom/\\.'
+        'Move .+? into dom/\\.',
+        'Callsites creating a channel in',
+        'Callsites of NS_NewInputStreamChannel in',
+        'Check error in',
+        'Removing invalid mochitests and adding'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
@@ -312,7 +321,8 @@ confirmed:
         'Remove unused variables[., ]?',
         'Remove unnecessary whitespace[., ]?',
         'Intermittent browser_',
-        'Double the test timeout$'/*,
+        'Double the test timeout$',
+        'Update Mozilla \\d+ to use NSS [\\d.]+'/*,
         'Disable test_'*/
     ].join('|') + ')', 'i');
 

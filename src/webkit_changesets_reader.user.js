@@ -248,7 +248,9 @@ confirmed:
         'Update the build fix for',
         'ARM64 buildfix after',
         'Bump version to',
-        'REGRESSION\\(r\\d+\\):? \\[GTK\\]'
+        'REGRESSION\\(r\\d+\\):? \\[GTK\\]',
+        'Use is<>\\(\\) / downcast<>\\(\\) for',
+        'iOS Simulator results for'
     ].join('|');
 
     filterRE = new RegExp(prefix + [
@@ -301,7 +303,8 @@ confirmed:
         'test gardening\\.$',
         'Tagging(?:\\.)?$',
         'Tagging Safari-[\\d.]+$',
-        'Create the Safari-[\\d.]+ tag\\.$'
+        'Create the Safari-[\\d.]+ tag\\.$',
+        '\\[WK2\\] Use is<>\\(\\) / downcast<>\\(\\) for'
     ].join('|') + ')', 'i');
 
     Array.prototype.forEach.call(commitMessages, function hide(commitMessage) {

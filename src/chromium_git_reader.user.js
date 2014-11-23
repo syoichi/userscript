@@ -113,7 +113,7 @@ confirmed:
         '(?:(?:linux(?:_aura)?)[\\- _/])?(?:cros|chrome ?os)' +
             '(?:[\\- _/](?:EULA|dbus|library|asan|interface))?',
         '(?:(?:DMP|Telemetry) / |ASan/)?Android' +
-            '(?: (?:buildbot|bb|WebView(?: build)?|Video|media|' +
+            '(?: (?:buildbot|bb|WebView(?: build)?|Video|media|scroller|' +
             'perf(?: tests?)?(?: runner)?|envsetup|memreport|Chromoting|' +
             '/ (?:Telemetry|DMP|dmprof|memreport))|Perf|/clang)?',
         'android_webview',
@@ -128,6 +128,7 @@ confirmed:
         'Gallery(?:\\.app)?',
         'Audio ?Player',
         'Video ?Player',
+        '(?:Mac|Android) Video ?Capture',
         'kiosk',
         'cryptohome',
         'shill \\(chromeos\\)',
@@ -154,6 +155,7 @@ confirmed:
         'Omnibox UMA Logging',
         'Add a new histogram',
         'VariationsService',
+        'Histograms\\.xml',
         '(?:More )?(?:win-)?TSAN(?:/Win)?(?: ?v\\d+)?(?: suppressions?)?',
         '[alm]san',
         'AsanCoverage',
@@ -205,7 +207,8 @@ confirmed:
         'unit_tests',
         'veatest',
         'LeakSanitizer',
-        'Fixes for re-enabling more MSVC level 4 warnings'
+        'Fixes for re-enabling more MSVC level 4 warnings',
+        '(?:Chrome)?cast'
     ].join('|');
     category = [
         'CC',
@@ -218,6 +221,7 @@ confirmed:
         'OS ?X',
         'Cocoa',
         'OriginChip, OSX',
+        'Extensions Toolbar Mac',
         'rAC,? ?(?:OSX|Android)',
         'OSX,? rAC',
         'Chrome ?OS',
@@ -237,7 +241,7 @@ confirmed:
         'PPAPI',
         'Media ?Galleries',
         'Memory Sheriff',
-        'Clean ?up',
+        'Clean[- ]?up',
         'ASAN',
         'content shell',
         'sql',
@@ -254,15 +258,17 @@ confirmed:
         'cr tool',
         'Tests?',
         'I-?Spy',
-        'Valgrind'
+        'Valgrind',
+        'Cast',
+        'Testing'
     ].join('|');
     roll = [
         'lib(?:jingle|FLAC|vpx|webp|webm|jpeg_turbo|phonenumber|usb|srtp|mtp|' +
-            'addressinput|va|yuv|expat)(?: headers?)?',
-        '(?:third_party/)?' +
+            'addressinput|va|yuv|expat|louis)(?: headers?)?',
+        '(?:(?:src/)?third_party/)?' +
             '(?:android_tools|openssl|libmtp|accessibility-developer-tools|' +
             'protobuf|webpagereplay|freetype|webgl(?:/src)?|libva|' +
-            'cros_system_api)',
+            'cros_system_api|skia|icu|cld_2)',
         '(?:tools/)?(?:gyp|grit|swarm(?:ing)?_client)(?:/)?',
         '(?:OpenSSL|[ln]ss)(?:_revision)?',
         'trunk VERSION',
@@ -284,8 +290,9 @@ confirmed:
         'FFmpeg',
         'Opus',
         'Breakpad',
+        'src/breakpad/src',
         'trace[\\- ]viewer',
-        '(?:Manual )?Skia',
+        'Manual Skia',
         'WebRTC',
         'lighttpd',
         'ANGLE',
@@ -304,7 +311,6 @@ confirmed:
         'harfbuzz(?:-ng)?',
         '\\.DEPS\\.git',
         'leveldb',
-        'ICU',
         'Mesa',
         'Chromite',
         'GTM',
@@ -348,9 +354,17 @@ confirmed:
         'font-compression-reference',
         'Dr\\. Memory',
         'dom_distiller_js',
-        'usrsctplib',
+        'usrsctp(?:lib)?',
+        'usrcstplib',
         'Android SDK',
-        'BoringSSL'
+        'BoringSSL',
+        'cryptotoken',
+        'AOSP Manifest',
+        'Checkstyle',
+        'typ',
+        'src/tools/gyp',
+        'mojo sdk',
+        'google-input-tools'
     ].join('|');
     fix = [
         '(?:the )?(?:(?:(?:non-goma )?Android(?: (?:Webview|Clang))?|' +
@@ -359,7 +373,7 @@ confirmed:
             'G?TV|non-aura|win(?:64)?|(?:Windows|mac) GN|clang) )?' +
             'build(?: (?:error|issue))?(?: (?:after|for) |\\.$)?',
         'checkdeps$',
-        '(?:a )?typos?(?:\\.)?$',
+        '(?:a )?typos?(?:(?:\\.)?$| in )',
         '(?:a )?memory leak(?: in |\\.$)',
         'unused variable assignement\\.$',
         'build breakage on ',
@@ -382,7 +396,8 @@ confirmed:
         '(?:another )?missing #include build error from ',
         '"unreachable code" warnings \\(MSVC warning 4702\\) in ',
         'memory leak in ',
-        'line endings(?:\\.)?$'
+        'line endings(?:\\.)?$',
+        'a DCHECK '
     ].join('|');
     remove = [
         'empty directory(?:\\.)?$',
@@ -394,7 +409,7 @@ confirmed:
         '(?:some )?unused (?:variable )?' +
             '(?:declarations?|definitions?|dependency|code|property|headers?|' +
             'unit tests?|field|files?|strings?|function|actions?|resources?|' +
-            'var(?:iable)?|includes?)(?:\\.)?$',
+            'var(?:iable)?|includes?|assets?)(?:\\.)?$',
         'unnecessary code for ',
         'unnecessary code\\.$',
         'unnecessary condition\\.',
@@ -431,7 +446,16 @@ confirmed:
         'Refactor',
         'Whitespace change to',
         'Windows compile fix after',
-        'Typo fix;'
+        'Typo fix;',
+        'Retire obsolete Valgrind supressions',
+        'Retire obsolete DrMemory suppressions',
+        'Remove implicit HANDLE conversions from',
+        'Replacing the OVERRIDE with override and FINAL with final in',
+        'replace OVERRIDE and FINAL with override and final in',
+        'Replacing the OVERRIDE with override in',
+        'Replace FINAL and OVERRIDE with their C\\+\\+11 counterparts in',
+        'Replace OVERRIDE with its C\\+\\+11 counterparts in',
+        'Standardize usage of virtual/override/final in'
     ].join('|');
 
     filterRE = new RegExp([
@@ -480,7 +504,11 @@ confirmed:
         '^Land Recent (?:QUIC|SPDY) Changes(?:\\.)?',
         '^(?:Update|Upload)(?: files in)? .*? ' +
             'to use results\\.AddValue(?:\\((?:\\.\\.\\.)?\\)(?:\\.)?)?$',
-        'for scoped_refptr(?:<T>)? operator T\\* removal(?:\\.)?$'/*,
+        'for scoped_refptr(?:<T>)? operator T\\* removal(?:\\.)?$',
+        '^Cleanup\\.$',
+        '^Use scoped_ptr::Pass instead of scoped_ptr::PassAs<T>\\.$',
+        '^Adding instrumentation to locate the source of jankiness\\.$',
+        '^Standardize usage of virtual/override/final specifiers\\.$'/*,
         '\b(?:Files\\.app|UMA|histogram|DCHECK)\b'*/
     ].join('|'), 'i');
 

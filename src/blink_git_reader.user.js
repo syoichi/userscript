@@ -122,6 +122,7 @@ confirmed:
         'arv@chromium.org',
         'fs@opera.com',
         'mstensho@opera.com',
+        'andersr@opera.com',
         'mkwst@chromium.org',
         'morrita@chromium.org',
         'jchaffraix@chromium.org',
@@ -194,6 +195,8 @@ confirmed:
         'yosin@chromium.org',
         'bashi@chromium.org',
         'horo@chromium.org',
+        'tzik@chromium.org',
+        'yukishiino@chromium.org',
         'jbroman@chromium.org',
         'stavila@adobe.com',
         'jww@chromium.org',
@@ -218,6 +221,7 @@ confirmed:
         'noel@chromium.org',
         'wjmaclean@chromium.org',
         'wolenetz@chromium.org',
+        'raymes@chromium.org',
         'aboxhall@chromium.org',
         'epenner@chromium.org',
         'dsinclair@chromium.org',
@@ -272,6 +276,21 @@ confirmed:
         'igsolla@chromium.org',
         'fdegans@chromium.org',
         'ppi@chromium.org',
+        'zeeshanq@chromium.org',
+        'mustaq@chromium.org',
+        'jackhou@chromium.org',
+        'scherkus@chromium.org',
+        'groby@chromium.org',
+        'ccameron@chromium.org',
+        'bartekn@chromium.org',
+        'hpayer@chromium.org',
+        'hshi@chromium.org',
+        'sergiyb@chromium.org',
+        'stip@chromium.org',
+        'machenbach@chromium.org',
+        'alexclarke@chromium.org',
+        'timvolodine@chromium.org',
+        'vapier@chromium.org',
         'urvang@google.com',
         'antonm@google.com',
         'vrk@google.com',
@@ -286,6 +305,7 @@ confirmed:
         'alexis.menard@intel.com',
         'qiankun.miao@intel.com',
         'joone.hur@intel.com',
+        'bruno.d@partner.samsung.com',
         'vivek.vg@samsung.com',
         'rob.buis@samsung.com',
         'r.kasibhatla@samsung.com',
@@ -296,13 +316,23 @@ confirmed:
         'sl.ostapenko@samsung.com',
         'mahesh.kk@samsung.com',
         'sunil.ratnu@samsung.com',
+        'sudarshan.p@samsung.com',
+        'mohan.reddy@samsung.com',
+        'krish.botta@samsung.com',
+        'vartul.k@samsung.com',
+        'anujk.sharma@samsung.com',
+        'je_julie.kim@samsung.com',
+        'r.nagaraj@samsung.com',
         'rhodovan.u-szeged@partner.samsung.com',
+        'pgal.u-szeged@partner.samsung.com',
         'a1.gomes@sisa.samsung.com',
         'rego@igalia.com',
         'efidler@blackberry.com',
         'petarj@mips.com',
+        'Gordana.Cmiljanovic@imgtec.com',
         'erik.corry@gmail.com',
-        'robhogan@gmail.com'
+        'robhogan@gmail.com',
+        'myid.o.shin@gmail.com'
     ];
 
     colons = [
@@ -330,13 +360,16 @@ confirmed:
         'Use tighter typing in editing'
     ].join('|');
     category = [
-        'MIPS',
+        'MIPS(?:64)?',
         'Sheriff',
         'Gardening',
         'Refactor(?:ing)?',
         'GOM',
         'Android',
-        'Linux'
+        'Linux',
+        'mac(?: asan)?',
+        'Sheriff-o-Matic',
+        'webkitpy'
     ].join('|');
     fix = [
         '(?:Windows Debug|the Windows component|Mac|Android|oilpan)' +
@@ -372,8 +405,8 @@ confirmed:
     ].join('|');
     misc = [
         '(?:Add(?:ed|ing|s)?|Remove|Skip|Layout) ' +
-            '(?:(?:a|super-flaky) )?(?:(?:layout|perf(?:ormance)?) )?' +
-            '(?:unit)?test(?:s|ing)?(?: for)?',
+            '(?:(?:a|super-flaky) )?(?:(?:perf(?:ormance)?) )?' +
+            '(?:(unit|layout) ?)?test(?:s|ing)?(?: for)?',
         '(?:also )?Adding an expected failure for .*? on',
         'Make .*? (?:not |non-)flaky',
         'Refactoring',
@@ -389,7 +422,13 @@ confirmed:
         'Widen timeout (?:expectation|suppression)s? for',
         'Use new is\\*Element\\(\\) helper functions',
         '(?:Oilpan:? )?Build fix (?:after|followup to)',
-        'DevTools: Remove orphaned CSS rules'
+        'DevTools: Remove orphaned CSS rules',
+        'Replace FINAL and OVERRIDE with their C\\+\\+11 counterparts in',
+        'Replace OVERRIDE and FINAL with override and final in',
+        'Replacing the OVERRIDE with override in',
+        'Replace OVERRIDE with override in',
+        'Move the v8::Isolate\\* parameter to the first parameter of ' +
+            'various binding methods in'
     ].join('|');
 
     filterRE = new RegExp([
@@ -433,7 +472,9 @@ confirmed:
         '^Update .+? classes to use OVERRIDE / FINAL when needed$',
         '^(?:Have|Make) (?:Document|Element|Node)' +
             '::[a-zA-Z]+\\(\\) return a reference$',
-        '^whitespace change$'
+        '^whitespace change$',
+        '^Replacing the OVERRIDE with override and FINAL with final$',
+        '^Tune performance test parameters\\.$'
     ].join('|'), 'i');
 
     each.call(commitMessages, hideCommit);
