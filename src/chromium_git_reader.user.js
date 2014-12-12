@@ -206,7 +206,8 @@ confirmed:
         'veatest',
         'LeakSanitizer',
         'Fixes for re-enabling more MSVC level 4 warnings',
-        '(?:Chrome)?cast'
+        '(?:Chrome)?cast',
+        'gn format'
     ].join('|');
     category = [
         'CC',
@@ -420,7 +421,8 @@ confirmed:
     ].join('|');
     misc = [
         'Reland',
-        '(?:(?:Manual|Partial|Experimental|Tentatively) )?Revert(?:ing)?',
+        '(?:(?:Manual|Partial|Experimental|Tentatively) )?(?:Re-)?' +
+            'Revert(?:ing)?',
         'Use a direct include of ' +
             '(?:strings|time|the (?:message_loop|shared_memory)) ' +
             'headers? in',
@@ -506,7 +508,9 @@ confirmed:
         '^Cleanup\\.$',
         '^Use scoped_ptr::Pass instead of scoped_ptr::PassAs<T>\\.$',
         '^Adding instrumentation to locate the source of jankiness\\.$',
-        '^Standardize usage of virtual/override/final specifiers\\.$'/*,
+        '^Standardize usage of virtual/override/final specifiers\\.$',
+        '^gn format //',
+        '^Update .+? to use the new version of LaunchProcess\\.$'/*,
         '\b(?:Files\\.app|UMA|histogram|DCHECK)\b'*/
     ].join('|'), 'i');
 
