@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.12
+// @version        0.0.13
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
@@ -11,7 +11,7 @@
 license: Public Domain
 confirmed:
     Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 32.0(Greasemonkey 2.2)
+        Mozilla Firefox 34.0(Greasemonkey 2.3)
 */
 
 (function executeReplaceLink(forEach, doc) {
@@ -210,30 +210,27 @@ confirmed:
 
     nodeObserver(function checkNodeData(info) {
         var node = info.node,
-            target = info.record.target,
-            nodeData = node.dataset,
             first = node.firstElementChild;
 
         if (
-            (
-                nodeData && (
-                    /^(?:tweet|activity)$/.test(nodeData.itemType) ||
-                        nodeData.cardType === 'photo' ||
-                        nodeData.componentContext === 'conversation' ||
-                        node.classList.contains('tweet-embed') ||
-                        node.classList.contains('replies') ||
-                        node.classList.contains('permalink') ||
-                        node.classList.contains('AppContainer') ||
-                        node.id === 'timeline' ||
-                        nodeData.componentTerm === 'tweet'
+            node.nodeType === Node.ELEMENT_NODE && (
+                node.matches([
+                    '#timeline',
+                    '.tweet-embed', '.replies', '.permalink', '.AppContainer',
+                    '[data-item-type="tweet"]',
+                    '[data-item-type="activity"]',
+                    '[data-card-type="photo"]',
+                    '[data-component-context="conversation"]',
+                    '[data-component-term="tweet"]'
+                ].join(', ')) || (
+                    node.matches([
+                        '.expanded-conversation > li',
+                        'ol.stream-items > li[class]'
+                    ].join(', ')) && first && first.matches([
+                        '[data-component-context="in_reply_to"]',
+                        '[data-component-context="replies"]'
+                    ].join(', '))
                 )
-            ) || (
-                target.classList.contains('expanded-conversation') &&
-                    node.tagName === 'LI' &&
-                    first && (
-                        first.dataset.componentContext === 'in_reply_to' ||
-                        first.dataset.componentContext === 'replies'
-                    )
             )
         ) {
             eachLinks(node);
