@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Feedly Cloud Colorful List View
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    colorize item headers in Feedly Cloud Title Only View.
 // @include        http://feedly.com/*
 // @include        https://feedly.com/*
@@ -95,23 +95,23 @@ confirmed:
         );
 
         sheet.insertRule([
-            'body.streched #section0_column0 > [id^="' + feedID + '"] {',
+            'body.stretched #section0_column0 > [id^="' + feedID + '"] {',
             '  background-color: hsl(' + hue + ', 70%, 80%) !important;',
             '}'
         ].join(''), cssRules.length);
         sheet.insertRule([
-            'body.streched #section0_column0 > [id^="' + feedID + '"]:hover {',
+            'body.stretched #section0_column0 > [id^="' + feedID + '"]:hover {',
             '  background-color: hsl(' + hue + ', 90%, 85%) !important;',
             '}'
         ].join(''), cssRules.length);
         sheet.insertRule([
-            'body.streched #section0_column0 > [id^="' + feedID + '"]' +
+            'body.stretched #section0_column0 > [id^="' + feedID + '"]' +
                 '[style*="opacity"] {',
             '  background-color: hsl(' + hue + ', 50%, 90%) !important;',
             '}'
         ].join(''), cssRules.length);
         sheet.insertRule([
-            'body.streched #section0_column0 > [id^="' + feedID + '"]' +
+            'body.stretched #section0_column0 > [id^="' + feedID + '"]' +
                 '[style*="opacity"]:hover {',
             '  background-color: hsl(' + hue + ', 70%, 95%) !important;',
             '}'
