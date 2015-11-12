@@ -37,7 +37,8 @@ module.exports = function createGruntConfig(grunt) {
             value: 80,
             allowComments: true
           },
-          disallowKeywords: ['continue', 'debugger', 'delete', 'void', 'with']
+          disallowKeywords: ['continue', 'debugger', 'delete', 'void', 'with'],
+          requireCamelCaseOrUpperCaseIdentifiers: null
         }
       }
     },
