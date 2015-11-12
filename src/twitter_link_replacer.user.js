@@ -58,13 +58,6 @@ confirmed:
     return options;
   }
 
-  function eachLinks(node) {
-    forEach.call(
-      node.querySelectorAll('.twitter-timeline-link, .link, .media'),
-      replacer
-    );
-  }
-
   function replacer(link) {
     var linkData, url, img, site;
 
@@ -89,6 +82,13 @@ confirmed:
     if (!site || site.replaceLink(link, url)) {
       link.href = url;
     }
+  }
+
+  function eachLinks(node) {
+    forEach.call(
+      node.querySelectorAll('.twitter-timeline-link, .link, .media'),
+      replacer
+    );
   }
 
   if (!pageContainer) {

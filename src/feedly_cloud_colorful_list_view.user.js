@@ -66,8 +66,8 @@ confirmed:
 
   function getHueFromFeedTitle(feedTitle) {
     var idx = 0,
-        len = feedTitle.length,
-        hue = 0;
+      len = feedTitle.length,
+      hue = 0;
 
     for (; idx < len; idx += 1) {
       hue += feedTitle[idx].charCodeAt();
@@ -87,7 +87,7 @@ confirmed:
 
     feedID = node.dataset.feedId = node.id.split(':')[0];
 
-    if (colors[feedID] !== undefined) {
+    if (typeof colors[feedID] !== 'undefined') {
       return;
     }
 

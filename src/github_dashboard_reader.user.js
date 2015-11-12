@@ -58,7 +58,7 @@ confirmed:
     return options;
   }
 
-  function $X(exp, context) {
+  function getElementsByXPath(exp, context) {
     var root, result, len, idx, nodes;
 
     root = context ? context.ownerDocument : doc;
@@ -74,7 +74,7 @@ confirmed:
     return nodes;
   }
   function getAlert(target) {
-    return $X([
+    return getElementsByXPath([
       './ancestor-or-self::',
       'div[contains(concat(" ", @class, " "), " alert ")]'
     ].join(''), target)[0];
@@ -115,7 +115,7 @@ confirmed:
   markings = news.getElementsByClassName('marking');
 
   news.addEventListener('dblclick', function recordTime(evt) {
-    var target, marking, alert, time, datetime;
+    var target, marking, alertElm, time, datetime;
 
     target = evt.target;
 
@@ -133,15 +133,15 @@ confirmed:
       }
     }
 
-    alert = getAlert(target);
+    alertElm = getAlert(target);
 
-    if (!alert) {
+    if (!alertElm) {
       return;
     }
 
-    alert.classList.toggle('marking');
+    alertElm.classList.toggle('marking');
 
-    time = alert.querySelector('time, local-time');
+    time = alertElm.querySelector('time, local-time');
 
     if (!time) {
       return;
