@@ -25,7 +25,6 @@ module.exports = function createGruntConfig(grunt) {
         },
         options: {
           config: '.jscsrc',
-          validateIndentation: 4,
           maximumLineLength: {
             value: 80,
             allowComments: true

@@ -11,85 +11,85 @@
 /* User Script info
 license: Public Domain
 confirmed:
-    Windows 7 Home Premium SP1 64bit:
-        Mozilla Firefox 33.1.1(Greasemonkey 2.3)
+  Windows 7 Home Premium SP1 64bit:
+    Mozilla Firefox 33.1.1(Greasemonkey 2.3)
 */
 
 /* global GM_openInTab */
 
 (function executeCustomizeKey(win, doc) {
-    'use strict';
+  'use strict';
 
-    var KEY, KEY_CODE, openInTab, modifiers;
+  var KEY, KEY_CODE, openInTab, modifiers;
 
-    KEY = 'h';
-    KEY_CODE = KEY.toUpperCase().charCodeAt();
-    // jscs: disable requireCamelCaseOrUpperCaseIdentifiers
-    openInTab = typeof GM_openInTab === 'function' ? GM_openInTab : null;
-    // jscs: enable requireCamelCaseOrUpperCaseIdentifiers
+  KEY = 'h';
+  KEY_CODE = KEY.toUpperCase().charCodeAt();
+  // jscs: disable requireCamelCaseOrUpperCaseIdentifiers
+  openInTab = typeof GM_openInTab === 'function' ? GM_openInTab : null;
+  // jscs: enable requireCamelCaseOrUpperCaseIdentifiers
 
-    modifiers = {
-        'Recent Commits to v8-git-mirror:master': {
-            url: 'https://chromium.googlesource.com/v8/v8/+/',
-            getURL: function forV8(hilight) {
-                var hash = hilight.querySelector(
-                    '.item_info > a:first-child'
-                ).href.split('/').slice(-1)[0];
+  modifiers = {
+    'Recent Commits to v8-git-mirror:master': {
+      url: 'https://chromium.googlesource.com/v8/v8/+/',
+      getURL: function forV8(hilight) {
+        var hash = hilight.querySelector(
+          '.item_info > a:first-child'
+        ).href.split('/').slice(-1)[0];
 
-                return this.url + hash;
-            }
-        }
-    };
+        return this.url + hash;
+      }
+    }
+  };
 
-    function openInBackgroundTab(url) {
-        var link;
+  function openInBackgroundTab(url) {
+    var link;
 
-        if (!win.chrome && openInTab) {
-            openInTab(url, true);
-            return;
-        }
-
-        link = doc.createElement('a');
-        link.href = url;
-        link.dispatchEvent(new MouseEvent('click', {button: 1}));
+    if (!win.chrome && openInTab) {
+      openInTab(url, true);
+      return;
     }
 
-    win.addEventListener('keydown', function openCustomizeLink(evt) {
-        var fsReading, hilight, feedTitle, modifier, url;
+    link = doc.createElement('a');
+    link.href = url;
+    link.dispatchEvent(new MouseEvent('click', {button: 1}));
+  }
 
-        if (
-            evt.keyCode !== KEY_CODE ||
-                (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) ||
-                (evt.target.tagName !== 'BODY')
-        ) {
-            return;
-        }
+  win.addEventListener('keydown', function openCustomizeLink(evt) {
+    var fsReading, hilight, feedTitle, modifier, url;
 
-        fsReading = doc.querySelector('.fs-reading');
+    if (
+      evt.keyCode !== KEY_CODE ||
+        (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) ||
+        (evt.target.tagName !== 'BODY')
+    ) {
+      return;
+    }
 
-        if (!fsReading) {
-            return;
-        }
+    fsReading = doc.querySelector('.fs-reading');
 
-        evt.stopImmediatePropagation();
+    if (!fsReading) {
+      return;
+    }
 
-        hilight = doc.querySelector('.hilight');
+    evt.stopImmediatePropagation();
 
-        if (!hilight) {
-            return;
-        }
+    hilight = doc.querySelector('.hilight');
 
-        feedTitle = fsReading.textContent.trim().split(/ \(\d+\)/)[0];
-        modifier = modifiers[feedTitle];
+    if (!hilight) {
+      return;
+    }
 
-        if (modifier) {
-            url = modifier.getURL(hilight);
-        }
+    feedTitle = fsReading.textContent.trim().split(/ \(\d+\)/)[0];
+    modifier = modifiers[feedTitle];
 
-        if (!url) {
-            url = hilight.querySelector('.item_info > a:first-child').href;
-        }
+    if (modifier) {
+      url = modifier.getURL(hilight);
+    }
 
-        openInBackgroundTab(url);
-    }, true);
+    if (!url) {
+      url = hilight.querySelector('.item_info > a:first-child').href;
+    }
+
+    openInBackgroundTab(url);
+  }, true);
 }(window, document));
