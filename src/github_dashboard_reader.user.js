@@ -62,10 +62,12 @@ confirmed:
     var root, result, len, idx, nodes;
 
     root = context ? context.ownerDocument : doc;
-    result = root.evaluate(exp, (context || doc), null, 7, null);
+    result = root.evaluate(exp, context || doc, null, 7, null);
     len = result.snapshotLength;
+    idx = 0;
+    nodes = [];
 
-    for (idx = 0, nodes = []; idx < len; idx += 1) {
+    for (; idx < len; idx += 1) {
       nodes.push(result.snapshotItem(idx));
     }
 

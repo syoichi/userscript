@@ -17,10 +17,10 @@ confirmed:
 
 // ref. https://developers.google.com/youtube/js_api_reference
 
-(function executeAutoPauseAndMaximizeQuality(doc) {
+(function executeAutoPauseAndMaximizeQuality(usDoc) {
   'use strict';
 
-  if (!doc.querySelector('.player-unavailable.hid')) {
+  if (!usDoc.querySelector('.player-unavailable.hid')) {
     return;
   }
 
@@ -117,6 +117,6 @@ confirmed:
     }, 0);
   }
 
-  doc.head.appendChild(doc.createElement('script')).textContent =
+  usDoc.head.appendChild(usDoc.createElement('script')).textContent =
     '(' + executeYouTubeEventListener + '(window, document));';
 }(document));

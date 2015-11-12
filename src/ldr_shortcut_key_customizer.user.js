@@ -61,7 +61,7 @@ confirmed:
     if (
       evt.keyCode !== KEY_CODE ||
         (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) ||
-        (evt.target.tagName !== 'BODY')
+        evt.target.tagName !== 'BODY'
     ) {
       return;
     }

@@ -68,8 +68,8 @@ confirmed:
     }
   }
 
-  nodeObserver(function getFeedlyPage(info) {
-    var feedlyCenter = info.node;
+  nodeObserver(function getFeedlyPage(bodyInfo) {
+    var feedlyCenter = bodyInfo.node;
 
     if (
       feedlyCenter.id === 'feedlyCenter' && (
@@ -81,8 +81,8 @@ confirmed:
         feedlyPageOptions.observer.disconnect();
       }
 
-      feedlyPageOptions = nodeObserver(function getEntries(info) {
-        var node = info.node;
+      feedlyPageOptions = nodeObserver(function getEntries(feedlyPageInfo) {
+        var node = feedlyPageInfo.node;
 
         if (node.id === 'section0_column0') {
           if (sectionOptions) {

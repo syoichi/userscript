@@ -228,15 +228,13 @@ confirmed:
           '[data-card-type="photo"]',
           '[data-component-context="conversation"]',
           '[data-component-term="tweet"]'
-        ].join(', ')) || (
-          node.matches([
-            '.expanded-conversation > li',
-            'ol.stream-items > li[class]'
-          ].join(', ')) && first && first.matches([
-            '[data-component-context="in_reply_to"]',
-            '[data-component-context="replies"]'
-          ].join(', '))
-        )
+        ].join(', ')) || node.matches([
+          '.expanded-conversation > li',
+          'ol.stream-items > li[class]'
+        ].join(', ')) && first && first.matches([
+          '[data-component-context="in_reply_to"]',
+          '[data-component-context="replies"]'
+        ].join(', '))
       )
     ) {
       eachLinks(node);

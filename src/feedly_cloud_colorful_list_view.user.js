@@ -65,9 +65,11 @@ confirmed:
   }
 
   function getHueFromFeedTitle(feedTitle) {
-    var idx, len, hue = 0;
+    var idx = 0,
+        len = feedTitle.length,
+        hue = 0;
 
-    for (idx = 0, len = feedTitle.length; idx < len; idx += 1) {
+    for (; idx < len; idx += 1) {
       hue += feedTitle[idx].charCodeAt();
     }
 
@@ -127,8 +129,8 @@ confirmed:
     setColor({node: entry});
   }
 
-  nodeObserver(function getFeedlyPage(info) {
-    var feedlyCenter = info.node;
+  nodeObserver(function getFeedlyPage(bodyInfo) {
+    var feedlyCenter = bodyInfo.node;
 
     if (
       feedlyCenter.id === 'feedlyCenter' && (
@@ -140,8 +142,8 @@ confirmed:
         feedlyPageOptions.observer.disconnect();
       }
 
-      feedlyPageOptions = nodeObserver(function getEntries(info) {
-        var node = info.node;
+      feedlyPageOptions = nodeObserver(function getEntries(feedlyPageInfo) {
+        var node = feedlyPageInfo.node;
 
         if (node.id === 'section0_column0') {
           forEach.call(node.children, wrap);
