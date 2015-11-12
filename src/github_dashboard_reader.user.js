@@ -31,7 +31,11 @@ confirmed:
 
     function eachNodes(record) {
       function callWithInfo(node) {
-        callback({node: node, record: record, options: options});
+        callback({
+          node: node,
+          record: record,
+          options: options
+        });
       }
 
       if (record.type === 'childList' && hasOnly) {
@@ -40,6 +44,7 @@ confirmed:
         callWithInfo(null);
       }
     }
+
     function eachMutations(mutations) {
       mutations.forEach(eachNodes);
     }
@@ -49,6 +54,7 @@ confirmed:
 
     options.observer = observer;
     options.callback = callback;
+
     return options;
   }
 

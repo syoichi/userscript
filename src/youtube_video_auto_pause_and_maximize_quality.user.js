@@ -37,6 +37,7 @@ confirmed:
       if (!hasTime()) {
         moviePlayer.seekTo(0);
       }
+
       if (!isMuted) {
         moviePlayer.unMute();
       }

@@ -46,6 +46,7 @@ confirmed:
 
     if (!win.chrome && openInTab) {
       openInTab(url, true);
+
       return;
     }
 

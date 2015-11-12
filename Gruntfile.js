@@ -29,7 +29,7 @@ module.exports = function createGruntConfig(grunt) {
             value: 80,
             allowComments: true
           },
-          requirePaddingNewLinesInObjects: null
+          disallowKeywords: ['continue', 'debugger', 'delete', 'void', 'with']
         }
       },
       node: {
