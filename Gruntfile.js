@@ -7,18 +7,26 @@ module.exports = function createGruntConfig(grunt) {
       options: {
         jshintrc: '.jshintrc'
       },
-      userscript: {
-        files: {
-          src: 'src/*.js'
-        }
-      },
       node: {
         files: {
           src: 'Gruntfile.js'
         }
+      },
+      userscript: {
+        files: {
+          src: 'src/*.js'
+        }
       }
     },
     jscs: {
+      node: {
+        files: {
+          src: 'Gruntfile.js'
+        },
+        options: {
+          config: '.jscsrc'
+        }
+      },
       userscript: {
         files: {
           src: 'src/*.js'
@@ -31,36 +39,9 @@ module.exports = function createGruntConfig(grunt) {
           },
           disallowKeywords: ['continue', 'debugger', 'delete', 'void', 'with']
         }
-      },
-      node: {
-        files: {
-          src: 'Gruntfile.js'
-        },
-        options: {
-          config: '.jscsrc'
-        }
       }
     },
     eslint: {
-      userscript: {
-        files: {
-          src: 'src/*.js'
-        },
-        options: {
-          rules: {
-            complexity: 0,
-            camelcase: 0,
-            'no-var': 0,
-            'object-shorthand': 0,
-            'prefer-arrow-callback': 0,
-            'prefer-template': 0,
-            'max-len': [2, 80, 2, {
-              ignoreUrls: true,
-              ignoreComments: true
-            }]
-          }
-        }
-      },
       node: {
         files: {
           src: 'Gruntfile.js'
@@ -69,6 +50,25 @@ module.exports = function createGruntConfig(grunt) {
           envs: ['node'],
           rules: {
             strict: [2, 'global']
+          }
+        }
+      },
+      userscript: {
+        files: {
+          src: 'src/*.js'
+        },
+        options: {
+          rules: {
+            complexity: [1, 5],
+            camelcase: 0,
+            'no-var': 0,
+            'object-shorthand': 0,
+            'prefer-arrow-callback': 1,
+            'prefer-template': 1,
+            'max-len': [2, 80, 2, {
+              ignoreUrls: true,
+              ignoreComments: true
+            }]
           }
         }
       }
