@@ -1,33 +1,32 @@
 // ==UserScript==
 // @name           Twitter Link Replacer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.13
+// @version        0.0.14
 // @description    replace various link by any link in Twitter.
 // @include        https://twitter.com/*
 // @run-at         document-end
+// @grant          none
 // ==/UserScript==
 
 /* User Script info
-license: Public Domain
+license: CC0 1.0 Universal
 confirmed:
   Windows 7 Home Premium SP1 64bit:
-    Mozilla Firefox 34.0(Greasemonkey 2.3)
+    Mozilla Firefox 42.0(Greasemonkey 3.5)
+    Google Chrome 46.0.2490.86
 */
 
-(function executeReplaceLink(forEach, doc) {
+(function executeReplaceLink(doc, forEach) {
   'use strict';
 
-  var pageContainer, sites;
-
-  pageContainer = doc.getElementById('page-container');
+  let pageContainer = doc.getElementById('page-container');
+  let sites;
 
   // via https://gist.github.com/syoichi/3366491
   function nodeObserver(callback, options) {
-    var hasOnly, each, nodesType, observer;
-
-    hasOnly = options.addOnly || options.removeOnly;
-    each = Array.prototype.forEach;
-    nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
+    let hasOnly = options.addOnly || options.removeOnly;
+    let each = Array.prototype.forEach;
+    let nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
 
     function eachNodes(record) {
       function callWithInfo(node) {
@@ -45,48 +44,53 @@ confirmed:
       }
     }
 
-    function eachMutations(mutations) {
+    let observer = new MutationObserver(mutations => {
       mutations.forEach(eachNodes);
-    }
+    });
 
-    observer = new window.MutationObserver(eachMutations);
     observer.observe(options.target, options);
 
-    options.observer = observer;
-    options.callback = callback;
+    return Object.assign(options, {
+      observer: observer,
+      callback: callback
+    });
+  }
 
-    return options;
+  function getURLFromLink(link) {
+    let linkData = link.dataset;
+
+    for (let dataName of [
+      'ultimateUrl', 'expandedUrl', 'resolvedUrlLarge', 'url'
+    ]) {
+      let data = linkData[dataName];
+
+      if (data) {
+        return data;
+      }
+    }
+
+    return link.title;
   }
 
   function replacer(link) {
-    var linkData, url, img, site;
-
-    linkData = link.dataset;
-    url = linkData.ultimateUrl || linkData.expandedUrl ||
-      linkData.resolvedUrlLarge || linkData.url || link.title;
+    let url = getURLFromLink(link);
 
     if (!url) {
-      if (link.childElementCount !== 1 || link.target) {
-        return;
-      }
-
-      img = link.querySelector('img');
-
-      if (img) {
-        url = img.src;
-      }
+      return;
     }
 
-    site = sites[(new URL(url)).hostname];
+    let site = sites[(new URL(url)).hostname];
 
-    if (!site || site.replaceLink(link, url)) {
-      link.href = url;
+    if (site && site.replaceLink(link, url)) {
+      return;
     }
+
+    link.href = url;
   }
 
   function eachLinks(node) {
     forEach.call(
-      node.querySelectorAll('.twitter-timeline-link, .link, .media'),
+      node.querySelectorAll('.twitter-timeline-link'),
       replacer
     );
   }
@@ -97,152 +101,111 @@ confirmed:
 
   sites = {
     'twitter.com': {
-      urlRE: new RegExp(
-        '^https?://twitter\\.com/\\w+/status(?:es)?/\\d+/photo/\\d+$'
-      ),
+      urlRE: /^https?:\/\/twitter\.com\/\w+\/status(?:es)?\/\d+\/photo\/\d+$/,
       replaceLink: function forTwitter(link, url) {
         if (!this.urlRE.test(url)) {
-          return true;
+          return false;
         }
 
-        link.href = url + '/large';
+        link.href = `${url}/large`;
+
+        return true;
       }
     },
     'pbs.twimg.com': {
       urlRE: new RegExp(
-        '^https?://pbs\\.twimg\\.com/media/[-\\w]+\\.(?:png|jpg)' +
-          '(?::large)?$'
+        '^https?://pbs\\.twimg\\.com/media/[-\\w]+\\.(?:png|jpg)(?::large)?$'
       ),
       replaceLink: function forPbsTwimg(link, url) {
-        var img, range, anchor;
-
         if (!this.urlRE.test(url)) {
-          return true;
+          return false;
         }
 
-        if (link.tagName === 'A') {
-          link.href = url.replace(/(?::large)?$/, ':orig');
-        } else {
-          img = link.querySelector('img:only-child');
+        link.href = url.replace(/(?::large)?$/, ':orig');
 
-          if (!img) {
-            return false;
-          }
-
-          range = doc.createRange();
-          anchor = doc.createElement('a');
-
-          anchor.href = url.replace(/(?::large)?$/, ':orig');
-
-          range.selectNode(img);
-          range.surroundContents(anchor);
-        }
-      }
-    },
-    'twitpic.com': {
-      urlRE: /^https?:\/\/twitpic\.com\/[\da-zA-Z]+$/,
-      replaceLink: function forTwitpic(link, url) {
-        if (!this.urlRE.test(url)) {
-          return true;
-        }
-
-        link.href = url + '/full';
+        return true;
       }
     },
     'gyazo.com': {
-      urlRE: /^(http:\/\/)(gyazo\.com\/[\da-f]{32}\.png)(?:\?\d+)?$/,
+      urlRE: /^(https?:\/\/)(gyazo\.com\/[\da-f]{32}\.png)(?:\?\d+)?$/,
       replaceLink: function forGyazo(link, url) {
-        var frag = this.urlRE.exec(url);
+        let frag = this.urlRE.exec(url);
 
         if (!frag) {
-          return true;
+          return false;
         }
 
-        link.href = frag[1] + 'cache.' + frag[2];
-      }
-    },
-    'yfrog.com': {
-      urlRE: /^(https?:\/\/)(yfrog\.com\/)([\da-zA-Z]+)$/,
-      replaceLink: function forYfrog(link, url) {
-        var frag = this.urlRE.exec(url);
+        link.href = `${frag[1]}cache.${frag[2]}`;
 
-        if (!frag) {
-          return true;
-        }
-
-        link.href = frag[1] + 'twitter.' + frag[2] + 'z/' + frag[3];
+        return true;
       }
     },
     'www.amazon.co.jp': {
       urlRE: new RegExp(
-        '^(https?://www.amazon.co.jp/)' +
+        '^(?:https?://(?:www\\.)?amazon\\.(?:co\\.)?jp/)' +
           '(?:(?:.+?|o|gp|exec/obidos)/)?' +
           '(?:dp|ASIN|product|aw(?:/d)?)' +
-          '(/(?:\\d{10}|\\d{9}X|B00[\\dA-Z]{7}))(?:[/?]|%3F)?'
+          '(/(?:\\d{10}|\\d{9}X|B0[\\dA-Z]{8}))(?:[/?]|%3F)?'
       ),
       replaceLink: function forAmazon(link, url) {
-        var frag = this.urlRE.exec(url);
+        let frag = this.urlRE.exec(url);
 
         if (!frag) {
-          return true;
+          return false;
         }
 
-        link.href = frag[1] + 'dp' + frag[2];
+        link.href = `http://www.amazon.co.jp/dp${frag[1]}`;
+
+        return true;
       }
     },
     'www.flickr.com': {
-      urlRE: /^https?:\/\/www\.flickr\.com\/photos\/.+\/\d+(?:\/)?$/,
+      urlRE: /^https?:\/\/www\.flickr\.com\/photos\/[^\/]+\/\d+/,
       replaceLink: function forFlickr(link, url) {
-        if (!this.urlRE.test(url)) {
-          return true;
+        let frag = this.urlRE.exec(url);
+
+        if (!frag) {
+          return false;
         }
 
-        link.href = url.replace(/(?:\/)?$/, '/sizes/o');
+        link.href = `${frag[0]}/sizes/o`;
+
+        return true;
       }
     },
     'flic.kr': {
       urlRE: /^https?:\/\/flic\.kr\/p\/[\da-zA-Z]+$/,
       replaceLink: function forFlickr(link, url) {
         if (!this.urlRE.test(url)) {
-          return true;
+          return false;
         }
 
-        link.href = url + '/sizes/o';
+        link.href = `${url}/sizes/o`;
+
+        return true;
       }
     }
   };
 
+  sites['amazon.co.jp'] = sites['amazon.jp'] = sites['www.amazon.co.jp'];
+
   eachLinks(pageContainer);
 
-  nodeObserver(function checkNodeData(info) {
-    var node = info.node,
-      first = node.firstElementChild;
+  nodeObserver(info => {
+    let node = info.node;
 
-    if (
-      node.nodeType === Node.ELEMENT_NODE && (
-        node.matches([
-          '#timeline',
-          '.tweet-embed', '.replies', '.permalink', '.AppContainer',
-          '[data-item-type="tweet"]',
-          '[data-item-type="activity"]',
-          '[data-card-type="photo"]',
-          '[data-component-context="conversation"]',
-          '[data-component-term="tweet"]'
-        ].join(', ')) || node.matches([
-          '.expanded-conversation > li',
-          'ol.stream-items > li[class]'
-        ].join(', ')) && first && first.matches([
-          '[data-component-context="in_reply_to"]',
-          '[data-component-context="replies"]'
-        ].join(', '))
-      )
-    ) {
-      eachLinks(node);
+    if (node.nodeType !== Node.ELEMENT_NODE || !node.matches([
+      '#timeline', '.permalink-container', '.ThreadedConversation-tweet',
+      '.AppContainer', '[data-item-type="tweet"]', '[data-item-type="activity"]'
+    ].join(', '))) {
+      return;
     }
+
+    eachLinks(node);
   }, {
     target: pageContainer,
     addOnly: true,
     childList: true,
     subtree: true
   });
-}(Array.prototype.forEach, document));
+}(document, Array.prototype.forEach));
