@@ -33,7 +33,7 @@
     "no-unexpected-multiline": 2,
 
     "accessor-pairs": 2,
-    "complexity": [2, 3],
+    "complexity": [2, 5],
     "consistent-return": 2,
     "curly": 2,
     "default-case": 2,
