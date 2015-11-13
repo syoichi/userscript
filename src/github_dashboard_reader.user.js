@@ -1,33 +1,33 @@
 // ==UserScript==
 // @name           GitHub Dashboard Reader
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.3
+// @version        0.0.4
 // @description    record alert's datetime and load next page on GitHub Dashboard.
 // @include        https://github.com/
 // @run-at         document-end
+// @grant          none
 // ==/UserScript==
 
 /* User Script info
-license: Public Domain
+license: CC0 1.0 Universal
 confirmed:
   Windows 7 Home Premium SP1 64bit:
-    Mozilla Firefox 31.0(Scriptish 0.1.12)
+    Mozilla Firefox 42.0(Greasemonkey 3.5)
+    Google Chrome 46.0.2490.86
 */
-
-/* global Range */
 
 (function executeGitHubDashboardReader(win, doc) {
   'use strict';
 
-  var news, buttons, markings, githubDatetime, opt;
+  let news = doc.querySelector('.news');
+  let markings;
+  let githubDatetime;
 
   // via https://gist.github.com/syoichi/3366491
   function nodeObserver(callback, options) {
-    var hasOnly, each, nodesType, observer;
-
-    hasOnly = options.addOnly || options.removeOnly;
-    each = Array.prototype.forEach;
-    nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
+    let hasOnly = options.addOnly || options.removeOnly;
+    let each = Array.prototype.forEach;
+    let nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
 
     function eachNodes(record) {
       function callWithInfo(node) {
@@ -45,54 +45,55 @@ confirmed:
       }
     }
 
-    function eachMutations(mutations) {
+    let observer = new MutationObserver(mutations => {
       mutations.forEach(eachNodes);
-    }
+    });
 
-    observer = new window.MutationObserver(eachMutations);
     observer.observe(options.target, options);
 
-    options.observer = observer;
-    options.callback = callback;
-
-    return options;
+    return Object.assign(options, {
+      observer: observer,
+      callback: callback
+    });
   }
 
-  function getElementsByXPath(exp, context) {
-    var root, result, len, idx, nodes;
+  function removeMarking(target) {
+    if (markings.length) {
+      let marking = markings[0];
 
-    root = context ? context.ownerDocument : doc;
-    result = root.evaluate(exp, context || doc, null, 7, null);
-    len = result.snapshotLength;
-    idx = 0;
-    nodes = [];
-
-    for (; idx < len; idx += 1) {
-      nodes.push(result.snapshotItem(idx));
-    }
-
-    return nodes;
-  }
-  function getAlert(target) {
-    return getElementsByXPath([
-      './ancestor-or-self::',
-      'div[contains(concat(" ", @class, " "), " alert ")]'
-    ].join(''), target)[0];
-  }
-  function toggleMarking() {
-    var time = news.querySelector([
-      'div.time > time[datetime="' + githubDatetime + '"]',
-      'div.time > local-time[datetime="' + githubDatetime + '"]'
-    ].join(', '));
-
-    if (time) {
-      getAlert(time).classList.toggle('marking');
-
-      return true;
+      if (!marking.contains(target)) {
+        marking.classList.remove('marking');
+      }
     }
   }
+
+  function toggleMarking(target) {
+    if (!target) {
+      return null;
+    }
+
+    let alertElm = target.closest('.alert');
+
+    if (!alertElm) {
+      return null;
+    }
+
+    alertElm.classList.toggle('marking');
+
+    return alertElm;
+  }
+
+  function getTime(target) {
+    return target ?
+      target.querySelector('time, local-time') :
+      news.querySelector([
+        `div.time > time[datetime="${githubDatetime}"]`,
+        `div.time > local-time[datetime="${githubDatetime}"]`
+      ].join(', '));
+  }
+
   function deleteContents(first, end) {
-    var range = new Range();
+    let range = new Range();
 
     range.setStartBefore(first);
     range.setEndAfter(end);
@@ -100,10 +101,23 @@ confirmed:
     return range.deleteContents();
   }
 
-  news = doc.querySelector('.news');
-
   if (!news) {
     return;
+  }
+
+  function removeUnneededAlerts() {
+    let first = markings[0].nextElementSibling;
+
+    if (!first || first.classList.contains('pagination')) {
+      return;
+    }
+
+    let end = news.lastElementChild;
+
+    deleteContents(
+      first,
+      end.classList.contains('pagination') ? end.previousElementSibling : end
+    );
   }
 
   doc.head.appendChild(doc.createElement('style')).textContent = [
@@ -114,10 +128,8 @@ confirmed:
 
   markings = news.getElementsByClassName('marking');
 
-  news.addEventListener('dblclick', function recordTime(evt) {
-    var target, marking, alertElm, time, datetime;
-
-    target = evt.target;
+  news.addEventListener('dblclick', evt => {
+    let target = evt.target;
 
     if (target === news) {
       return;
@@ -125,29 +137,21 @@ confirmed:
 
     win.getSelection().removeAllRanges();
 
-    if (markings.length) {
-      marking = markings[0];
+    removeMarking(target);
 
-      if (!marking.contains(target)) {
-        marking.classList.remove('marking');
-      }
-    }
-
-    alertElm = getAlert(target);
+    let alertElm = toggleMarking(target);
 
     if (!alertElm) {
       return;
     }
 
-    alertElm.classList.toggle('marking');
-
-    time = alertElm.querySelector('time, local-time');
+    let time = getTime(alertElm);
 
     if (!time) {
       return;
     }
 
-    datetime = time.getAttribute('datetime');
+    let datetime = time.getAttribute('datetime');
 
     localStorage.githubDatetime =
       localStorage.githubDatetime === datetime ? '' : datetime;
@@ -155,46 +159,32 @@ confirmed:
 
   githubDatetime = localStorage.githubDatetime;
 
-  if (!githubDatetime || toggleMarking()) {
+  if (!githubDatetime || toggleMarking(getTime())) {
     return;
   }
 
-  buttons = news.getElementsByClassName('js-events-pagination');
+  let buttons = news.getElementsByClassName('js-events-pagination');
 
   if (!buttons.length) {
     return;
   }
 
-  opt = nodeObserver(function nextPageLoader(info) {
-    var classes, first, end;
-
-    classes = info.record.target.classList;
+  nodeObserver(info => {
+    let classes = info.record.target.classList;
 
     if (classes.contains('loading') || !classes.contains('ajax_paginate')) {
       return;
     }
 
-    if (!toggleMarking()) {
+    if (!toggleMarking(getTime())) {
       buttons[0].click();
 
       return;
     }
 
-    opt.observer.disconnect();
+    info.options.observer.disconnect();
 
-    first = markings[0].nextElementSibling;
-
-    if (!first || first.classList.contains('pagination')) {
-      return;
-    }
-
-    end = news.lastElementChild;
-
-    if (end.classList.contains('pagination')) {
-      end = end.previousElementSibling;
-    }
-
-    deleteContents(first, end);
+    removeUnneededAlerts();
   }, {
     target: news,
     attributes: true,
@@ -202,7 +192,7 @@ confirmed:
     subtree: true
   });
 
-  win.addEventListener('load', function delayClick() {
+  win.addEventListener('load', () => {
     buttons[0].click();
   });
 }(window, document));
