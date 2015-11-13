@@ -1,20 +1,21 @@
 // ==UserScript==
 // @name           Hatena Bookmark hide same title comment
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.1
+// @version        0.0.2
 // @description    hide same title comment in Hatena Bookmark.
 // @include        http://b.hatena.ne.jp/entry/*
 // @include        http://b.hatena.ne.jp/entry?eid=*
 // @include        http://b.hatena.ne.jp/entry?url=*
 // @run-at         document-end
+// @grant          none
 // ==/UserScript==
 
 /* User Script info
-license: Public Domain
+license: CC0 1.0 Universal
 confirmed:
   Windows 7 Home Premium SP1 64bit:
-    Mozilla Firefox 22.0(Scriptish 0.1.11)
-    Google Chrome 28.0.1500.72
+    Mozilla Firefox 42.0(Greasemonkey 3.5)
+    Google Chrome 46.0.2490.86
 */
 
 // inspired by http://let.hatelabo.jp/pacochi/let/gYC-xNPqhbauPQ
@@ -23,23 +24,19 @@ confirmed:
 (function executeHideComment(doc) {
   'use strict';
 
-  var publicBookmarks, title;
-
-  publicBookmarks = doc.getElementById('public-bookmarks');
+  let publicBookmarks = doc.getElementById('public-bookmarks');
 
   if (!publicBookmarks) {
     return;
   }
 
-  title = doc.getElementById('head-entry-link').textContent.trim();
+  let title = doc.getElementById('head-entry-link').textContent.trim();
 
   // via https://gist.github.com/syoichi/3366491
   function nodeObserver(callback, options) {
-    var hasOnly, each, nodesType, observer;
-
-    hasOnly = options.addOnly || options.removeOnly;
-    each = Array.prototype.forEach;
-    nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
+    let hasOnly = options.addOnly || options.removeOnly;
+    let each = Array.prototype.forEach;
+    let nodesType = options.addOnly ? 'addedNodes' : 'removedNodes';
 
     function eachNodes(record) {
       function callWithInfo(node) {
@@ -57,62 +54,66 @@ confirmed:
       }
     }
 
-    function eachMutations(mutations) {
+    let observer = new MutationObserver(mutations => {
       mutations.forEach(eachNodes);
-    }
+    });
 
-    observer = new window.MutationObserver(eachMutations);
     observer.observe(options.target, options);
 
-    options.observer = observer;
-    options.callback = callback;
+    return Object.assign(options, {
+      observer: observer,
+      callback: callback
+    });
+  }
 
-    return options;
+  function wrap(str, prefix, suffix) {
+    return prefix == null ?
+      str :
+      prefix + str + (suffix == null ? prefix : suffix);
   }
 
   function hideComment(comment) {
-    var commentText = comment.textContent.trim();
+    let commentText = comment.textContent.trim();
 
-    if (
-      commentText.indexOf(title) === 0 ||
-        title.indexOf(commentText) !== -1 ||
-        '“' + title + '”' === commentText ||
-        '"' + title + '"' === commentText ||
-        '\'' + title + '\'' === commentText ||
-        '「' + title + '」' === commentText
-    ) {
-      doc.evaluate('./ancestor::li[@data-user]', comment, null, 9, null)
-        .singleNodeValue.hidden = true;
+    if (!(
+      commentText.indexOf(title) === 0 || title.includes(commentText) ||
+        [['“', '”'], ['"'], ['\''], ['「', '」']].some(brackets =>
+          wrap(title, ...brackets) === commentText
+        )
+    )) {
+      return;
     }
+
+    comment.closest('li[data-user]').hidden = true;
   }
 
   Array.prototype.forEach.call(
-    doc.querySelectorAll(
-      '.bookmark-list > :not(.nocomment) .comment'
-    ),
+    doc.querySelectorAll('.bookmark-list > :not(.nocomment) .comment'),
     hideComment
   );
 
-  if (publicBookmarks) {
-    nodeObserver(function getComment(info) {
-      var bookmark = info.node,
-        comment;
-
-      if (
-        bookmark.tagName === 'LI' &&
-          !bookmark.classList.contains('nocomment')
-      ) {
-        comment = bookmark.querySelector('.comment');
-
-        if (comment) {
-          hideComment(comment);
-        }
-      }
-    }, {
-      target: publicBookmarks,
-      addOnly: true,
-      childList: true,
-      subtree: true
-    });
+  if (!publicBookmarks) {
+    return;
   }
+
+  nodeObserver(info => {
+    let bookmark = info.node;
+
+    if (bookmark.tagName !== 'LI' || bookmark.classList.contains('nocomment')) {
+      return;
+    }
+
+    let comment = bookmark.querySelector('.comment');
+
+    if (!comment) {
+      return;
+    }
+
+    hideComment(comment);
+  }, {
+    target: publicBookmarks,
+    addOnly: true,
+    childList: true,
+    subtree: true
+  });
 }(document));
