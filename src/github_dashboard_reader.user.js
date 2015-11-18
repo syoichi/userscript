@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           GitHub Dashboard Reader
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.4
+// @version        0.0.5
 // @description    record alert's datetime and load next page on GitHub Dashboard.
 // @include        https://github.com/
 // @run-at         document-end
@@ -40,9 +40,11 @@ confirmed:
 
       if (record.type === 'childList' && hasOnly) {
         each.call(record[nodesType], callWithInfo);
-      } else {
-        callWithInfo(null);
+
+        return;
       }
+
+      callWithInfo(null);
     }
 
     let observer = new MutationObserver(mutations => {
@@ -57,14 +59,24 @@ confirmed:
     });
   }
 
-  function removeMarking(target) {
-    if (markings.length) {
-      let marking = markings[0];
+  function trimIndent(str) {
+    let indentLength = /^ +/.exec(str.split(/\r?\n/)[1])[0].length;
 
-      if (!marking.contains(target)) {
-        marking.classList.remove('marking');
-      }
+    return str.replace(new RegExp(`^ {${indentLength}}`, 'gm'), '').trim();
+  }
+
+  function removeMarking(target) {
+    if (!markings.length) {
+      return;
     }
+
+    let marking = markings[0];
+
+    if (marking.contains(target)) {
+      return;
+    }
+
+    marking.classList.remove('marking');
   }
 
   function toggleMarking(target) {
@@ -92,39 +104,39 @@ confirmed:
       ].join(', '));
   }
 
-  function deleteContents(first, end) {
+  function deleteContents(start, end) {
     let range = new Range();
 
-    range.setStartBefore(first);
+    range.setStartBefore(start);
     range.setEndAfter(end);
 
     return range.deleteContents();
   }
 
-  if (!news) {
-    return;
-  }
-
   function removeUnneededAlerts() {
-    let first = markings[0].nextElementSibling;
+    let start = markings[0].nextElementSibling;
 
-    if (!first || first.classList.contains('pagination')) {
+    if (!start || start.classList.contains('pagination')) {
       return;
     }
 
     let end = news.lastElementChild;
 
     deleteContents(
-      first,
+      start,
       end.classList.contains('pagination') ? end.previousElementSibling : end
     );
   }
 
-  doc.head.appendChild(doc.createElement('style')).textContent = [
-    '.marking {',
-    '  background-color: red !important;',
-    '}'
-  ].join('\n');
+  if (!news) {
+    return;
+  }
+
+  doc.head.appendChild(doc.createElement('style')).textContent = trimIndent(`
+    .marking {
+      background-color: red !important;
+    }
+  `);
 
   markings = news.getElementsByClassName('marking');
 
@@ -163,16 +175,18 @@ confirmed:
     return;
   }
 
-  let buttons = news.getElementsByClassName('js-events-pagination');
+  let buttons = news.getElementsByClassName('ajax-pagination-btn');
 
   if (!buttons.length) {
     return;
   }
 
   nodeObserver(info => {
-    let classes = info.record.target.classList;
+    let node = info.node;
 
-    if (classes.contains('loading') || !classes.contains('ajax_paginate')) {
+    if (
+      node.nodeType !== Node.ELEMENT_NODE || !node.classList.contains('loading')
+    ) {
       return;
     }
 
@@ -187,8 +201,8 @@ confirmed:
     removeUnneededAlerts();
   }, {
     target: news,
-    attributes: true,
-    attributeFilter: ['class'],
+    removeOnly: true,
+    childList: true,
     subtree: true
   });
 
