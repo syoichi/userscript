@@ -7,7 +7,8 @@
     "grunt-cli": "",
     "grunt-contrib-jshint": "",
     "grunt-jscs": "",
-    "grunt-eslint": ""
+    "grunt-eslint": "",
+    "eslint-config-tombfix": ""
   },
   "engines": {
     "node": ">=5",
