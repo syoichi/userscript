@@ -1,14 +1,12 @@
 {
   "scripts": {
-    "test": "grunt"
+    "test": "jshint src/ --exclude=src/deprecated/ && jscs src/ && eslint src/*.js"
   },
   "devDependencies": {
-    "grunt": "",
-    "grunt-cli": "",
-    "grunt-contrib-jshint": "",
-    "grunt-jscs": "",
+    "jshint": "",
+    "jscs": "",
     "jscs-config-tombfix": "",
-    "grunt-eslint": "",
+    "eslint": "",
     "eslint-config-tombfix": ""
   },
   "engines": {

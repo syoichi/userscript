@@ -1,3 +1,10 @@
 {
-  "preset": "tombfix"
+  "preset": "tombfix",
+
+  "excludeFiles": ["src/deprecated/"],
+  "maximumLineLength": {
+    "value": 80,
+    "allowComments": true
+  },
+  "requireCamelCaseOrUpperCaseIdentifiers": null
 }
