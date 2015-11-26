@@ -10,8 +10,8 @@
     "eslint-config-tombfix": ""
   },
   "engines": {
-    "node": ">=5",
-    "npm": ">=3.3.6"
+    "node": ">=5.1.0",
+    "npm": ">=3.3.12"
   },
   "private": true
 }
