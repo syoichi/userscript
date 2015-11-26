@@ -7,6 +7,7 @@
     "grunt-cli": "",
     "grunt-contrib-jshint": "",
     "grunt-jscs": "",
+    "jscs-config-tombfix": "",
     "grunt-eslint": "",
     "eslint-config-tombfix": ""
   },
