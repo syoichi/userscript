@@ -24,7 +24,7 @@ module.exports = function createGruntConfig(grunt) {
           src: 'Gruntfile.js'
         },
         options: {
-          config: '.jscsrc'
+          config: '.jscs.json'
         }
       },
       userscript: {
@@ -32,7 +32,7 @@ module.exports = function createGruntConfig(grunt) {
           src: 'src/*.js'
         },
         options: {
-          config: '.jscsrc',
+          config: '.jscs.json',
           maximumLineLength: {
             value: 80,
             allowComments: true
