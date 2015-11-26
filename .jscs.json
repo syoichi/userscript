@@ -6,5 +6,6 @@
     "value": 80,
     "allowComments": true
   },
-  "requireCamelCaseOrUpperCaseIdentifiers": null
+  "requireCamelCaseOrUpperCaseIdentifiers": null,
+  "requireObjectDestructuring": null
 }
