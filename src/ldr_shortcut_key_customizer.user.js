@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           LDR Shortcut Key Customizer
 // @namespace      https://github.com/syoichi/userscript
-// @version        0.0.4
+// @version        0.0.5
 // @description    customize shortcut key in Live Dwango Reader.
 // @include        http://reader.livedoor.com/reader/
 // @run-at         document-end
@@ -12,7 +12,7 @@
 license: CC0 1.0 Universal
 confirmed:
   Windows 7 Home Premium SP1 64bit:
-    Mozilla Firefox 42.0(Greasemonkey 3.5)
+    Mozilla Firefox 43.0.4(Greasemonkey 3.6)
 */
 
 /* global GM_openInTab */
@@ -20,51 +20,15 @@ confirmed:
 (function executeCustomizeKey(win, doc) {
   'use strict';
 
-  const KEY = 'h';
-  const KEY_CODE = KEY.toUpperCase().charCodeAt();
+  let gmOpenInTab = typeof GM_openInTab === 'function' ? GM_openInTab : null;
 
-  let openInTab = typeof GM_openInTab === 'function' ? GM_openInTab : null;
-  let modifiers = {};
-
-  function isTarget(evt) {
-    return evt.keyCode === KEY_CODE &&
-      !(evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) &&
-      evt.target.tagName === 'BODY';
-  }
-
-  function getEntryURL(evt) {
-    let fsReading = doc.querySelector('.fs-reading');
-
-    if (!fsReading) {
-      return '';
-    }
-
-    evt.stopImmediatePropagation();
-
-    let hilight = doc.querySelector('.hilight');
-
-    if (!hilight) {
-      return '';
-    }
-
-    let feedTitle = fsReading.textContent.trim().split(/ \(\d+\)/)[0];
-    let modifier = modifiers[feedTitle];
-    let url;
-
-    if (modifier) {
-      url = modifier.getURL(hilight);
-    }
-
+  function openInTab(url, isBackground) {
     if (!url) {
-      url = hilight.querySelector('.item_info > a:first-child').href;
+      return;
     }
 
-    return url;
-  }
-
-  function openInBackgroundTab(url) {
-    if (!win.chrome && openInTab) {
-      openInTab(url, true);
+    if (!win.chrome && gmOpenInTab) {
+      gmOpenInTab(url, Boolean(isBackground));
 
       return;
     }
@@ -73,22 +37,162 @@ confirmed:
       href: url
     });
 
-    link.dispatchEvent(new MouseEvent('click', {
-      button: 1
-    }));
+    if (isBackground) {
+      link.dispatchEvent(new MouseEvent('click', {
+        button: 1
+      }));
+
+      return;
+    }
+
+    Object.assign(link, {
+      target: '_blank'
+    }).dispatchEvent(new MouseEvent('click'));
   }
 
+  function getEntryURL() {
+    let url;
+    let hilight = doc.querySelector('.hilight');
+
+    if (hilight) {
+      url = hilight.querySelector('.item_info > a:first-child').href;
+    }
+
+    return url || '';
+  }
+
+  function getHatenaBookmarkURL() {
+    let url;
+    let hilight = doc.querySelector('.hilight');
+
+    if (hilight) {
+      let link = hilight.querySelector(
+        '.item_body > .body > blockquote > p:last-child > ' +
+          'a[href^="http://b.hatena.ne.jp/entry/"]'
+      );
+
+      if (link) {
+        url = link.href;
+      }
+    }
+
+    return url || '';
+  }
+
+  function reloadImg(img) {
+    if (img.complete && img.naturalHeight !== 0 && img.naturalWidth !== 0) {
+      return;
+    }
+
+    let {src} = img;
+
+    img.src = 'about:blank';
+
+    img.src = src;
+  }
+
+  let infoList = [{
+    shortcutKeys: [['h']],
+    transact: function openLinkInBackgroundTab() {
+      openInTab(getEntryURL(), true);
+    }
+  }, {
+    shortcutKeys: [['b']],
+    transact: function openHatenaBookmarkLink() {
+      openInTab(getHatenaBookmarkURL());
+    }
+  }, {
+    shortcutKeys: [['l']],
+    transact: function openHatenaBookmarkLinkInBackgroundTab() {
+      openInTab(getHatenaBookmarkURL(), true);
+    }
+  }, {
+    shortcutKeys: [['i']],
+    transact: function reloadFeedItemImage() {
+      for (let img of doc.querySelectorAll('.item_body img')) {
+        reloadImg(img);
+      }
+    }
+  }, {
+    shortcutKeys: [
+      ['Shift', 'Control', 'Shift'], ['Control', 'Shift', 'Control']
+    ],
+    transact: function noOperation() {
+      return null;
+    }
+  }];
+
+  let Utils = {
+    checkModifierKeys(evt, modifierKeys) {
+      for (let modifierKey of modifierKeys) {
+        if (!evt.getModifierState(modifierKey)) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+    isMatchedModifierState(evt, modifierKey, modifierKeys) {
+      let state = evt.getModifierState(modifierKey);
+
+      return state && modifierKeys.indexOf(modifierKey) !== -1 ||
+        !state && modifierKeys.indexOf(modifierKey) === -1;
+    },
+    isMatchedModifierStates(evt, modifierKeys) {
+      for (let modifierKey of ['Control', 'Shift', 'Alt']) {
+        if (!Utils.isMatchedModifierState(evt, modifierKey, modifierKeys)) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+    checkModifierStates(evt, modifierKeys) {
+      return modifierKeys[0] === 'Accel' ?
+        evt.getModifierState('Accel') && Utils.checkModifierKeys(
+          evt,
+          modifierKeys.splice(1, modifierKeys.length)
+        ) :
+        Utils.isMatchedModifierStates(evt, modifierKeys);
+    },
+    checkShortcutKeys(evt, shortcutKeys) {
+      for (let shortcutKey of shortcutKeys) {
+        let arr = shortcutKey.slice();
+
+        if (arr.pop() === evt.key && Utils.checkModifierStates(evt, arr)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    handleShortcutKeys(evt, shortcutKeyInfoList, context) {
+      for (let {shortcutKeys, transact} of shortcutKeyInfoList) {
+        if (Utils.checkShortcutKeys(evt, shortcutKeys)) {
+          transact.call(context, evt);
+
+          return true;
+        }
+      }
+
+      return false;
+    }
+  };
+
   win.addEventListener('keydown', evt => {
-    if (!isTarget(evt)) {
+    if (
+      evt.target.tagName !== 'BODY' ||
+        !Utils.handleShortcutKeys(evt, infoList, null)
+    ) {
       return;
     }
 
-    let url = getEntryURL(evt);
+    evt.stopImmediatePropagation();
 
-    if (!url) {
+    if (evt.defaultPrevented) {
       return;
     }
 
-    openInBackgroundTab(url);
+    evt.preventDefault();
   }, true);
 }(window, document));
